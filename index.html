@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MENÜ</title>
+<style>
+  /* ===== Apple HIG · SF Pro · systemBlue ===== */
+  :root{
+    --blue:#007AFF;
+    --bg:#F2F2F7;          /* systemGrey6 grouped background */
+    --card:#FFFFFF;
+    --label:#000000;
+    --secondary:rgba(60,60,67,.60);
+    --tertiary:rgba(60,60,67,.30);
+    --sep:rgba(60,60,67,.29);
+    --fill:#E9E9EB;        /* segmented, unselected */
+    --tint:rgba(0,122,255,.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --blue:#0A84FF;
+      --bg:#000000;
+      --card:#1C1C1E;
+      --label:#FFFFFF;
+      --secondary:rgba(235,235,245,.60);
+      --tertiary:rgba(235,235,245,.30);
+      --sep:rgba(84,84,88,.55);
+      --fill:#2C2C2E;
+      --tint:rgba(10,132,255,.20);
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",system-ui,sans-serif;
+    background:var(--bg);color:var(--label);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    padding-bottom:96px;letter-spacing:-.01em;
+  }
+  /* HEADER — iOS large title */
+  header{background:var(--card);padding:28px 20px 20px;border-bottom:.5px solid var(--sep)}
+  .mark{
+    width:56px;height:56px;border-radius:14px;background:var(--blue);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;
+    margin-bottom:14px;letter-spacing:0;
+  }
+  header h1{font-size:34px;line-height:1.06;font-weight:700;letter-spacing:-.02em}
+  header p{color:var(--secondary);font-size:15px;margin-top:6px;font-weight:400}
+  /* SEGMENTED NAV */
+  nav{
+    position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 86%, transparent);
+    backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+    display:flex;gap:8px;overflow-x:auto;padding:12px 16px;border-bottom:.5px solid var(--sep);
+    scrollbar-width:none;
+  }
+  nav::-webkit-scrollbar{display:none}
+  nav a{
+    flex:0 0 auto;text-decoration:none;color:var(--label);background:var(--fill);
+    padding:7px 14px;border-radius:980px;font-size:14px;font-weight:500;white-space:nowrap;letter-spacing:-.01em;
+    transition:background .15s,color .15s;
+  }
+  nav a.active{background:var(--blue);color:#fff;font-weight:600}
+  /* SECTION */
+  section{padding:26px 16px 0}
+  section h2{
+    font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+    color:var(--secondary);margin:0 4px 8px;
+  }
+  /* GROUPED INSET LIST */
+  .group{background:var(--card);border-radius:12px;overflow:hidden}
+  .row{
+    display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
+    padding:13px 16px;position:relative;
+  }
+  .row + .row::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+  .row .name{font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.25}
+  .row .desc{color:var(--secondary);font-size:14px;margin-top:2px;line-height:1.3;font-weight:400}
+  .row .price{font-size:17px;font-weight:600;color:var(--blue);white-space:nowrap;letter-spacing:-.02em}
+  .badge{
+    display:inline-block;font-size:11px;font-weight:600;color:var(--blue);background:var(--tint);
+    padding:2px 7px;border-radius:6px;margin-left:8px;vertical-align:middle;letter-spacing:0;
+  }
+  footer{text-align:center;color:var(--tertiary);font-size:12px;padding:30px 16px;letter-spacing:-.01em}
+  footer b{color:var(--secondary);font-weight:500}
+  .pill{
+    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+    background:var(--label);color:var(--card);font-size:13px;font-weight:500;
+    padding:10px 18px;border-radius:980px;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:40;letter-spacing:-.01em;
+  }
+</style>
+</head>
+<body>
+
+<script>
+const MENU = {
+  isim: "Moda Coffee & Garden",
+  slogan: "Nitelikli kahve · Ev yapımı tatlılar · Brunch",
+  logoHarf: "M",
+  bolumler: [
+    { ad:"Sıcak Kahveler", urunler:[
+      { ad:"Espresso", not:"Tek / Duble", fiyat:"₺70" },
+      { ad:"Americano", not:"Günün çekirdeği", fiyat:"₺95" },
+      { ad:"Flat White", not:"Çift shot, ipeksi süt", fiyat:"₺120", rozet:"Popüler" },
+      { ad:"Cappuccino", not:"", fiyat:"₺110" },
+      { ad:"Türk Kahvesi", not:"Sade / az / orta / şekerli", fiyat:"₺75" },
+    ]},
+    { ad:"Soğuk Kahveler", urunler:[
+      { ad:"Iced Latte", not:"Buzlu, taze demleme", fiyat:"₺120" },
+      { ad:"Cold Brew", not:"18 saat demlenmiş", fiyat:"₺130", rozet:"Yeni" },
+      { ad:"Ice Americano", not:"", fiyat:"₺105" },
+    ]},
+    { ad:"Tatlılar", urunler:[
+      { ad:"San Sebastian Cheesecake", not:"Dilim", fiyat:"₺150", rozet:"Çok satan" },
+      { ad:"Dondurmalı Brownie", not:"Sıcak servis", fiyat:"₺135" },
+      { ad:"Tiramisu", not:"Ev yapımı", fiyat:"₺140" },
+      { ad:"Cookie", not:"Belçika çikolatalı", fiyat:"₺65" },
+    ]},
+    { ad:"Brunch & Atıştırmalık", urunler:[
+      { ad:"Serpme Kahvaltı", not:"2 kişilik", fiyat:"₺650", rozet:"Hafta sonu" },
+      { ad:"Avokado Toast", not:"Sourdough ekmek, poşe yumurta", fiyat:"₺220" },
+      { ad:"Simit Tabağı", not:"Peynir, zeytin, domates", fiyat:"₺160" },
+    ]},
+    { ad:"Soğuk İçecekler", urunler:[
+      { ad:"Ev Yapımı Limonata", not:"Nane & zencefil", fiyat:"₺85" },
+      { ad:"Taze Portakal Suyu", not:"", fiyat:"₺95" },
+      { ad:"Milkshake", not:"Çilek / muz / çikolata", fiyat:"₺120" },
+    ]},
+  ]
+};
+</script>
+
+<header>
+  <div class="mark" id="logo"></div>
+  <h1 id="isim"></h1>
+  <p id="slogan"></p>
+</header>
+<nav id="nav"></nav>
+<main id="menu"></main>
+<footer>Dijital menü · <b id="fname"></b> · hazırlayan <b>Roy</b></footer>
+<div class="pill">Örnek dijital menü — QR ile açılır</div>
+
+<script>
+document.getElementById('logo').textContent = MENU.logoHarf;
+document.getElementById('isim').textContent = MENU.isim;
+document.getElementById('slogan').textContent = MENU.slogan;
+document.getElementById('fname').textContent = MENU.isim;
+document.title = MENU.isim + " · Menü";
+
+const nav = document.getElementById('nav');
+const menu = document.getElementById('menu');
+function el(tag, cls, text){
+  const n = document.createElement(tag);
+  if(cls) n.className = cls;
+  if(text != null) n.textContent = text;
+  return n;
+}
+MENU.bolumler.forEach((b,i)=>{
+  const id = "b"+i;
+  const a = el('a', i===0 ? 'active' : '', b.ad);
+  a.href = "#"+id; nav.appendChild(a);
+
+  const sec = el('section'); sec.id = id;
+  sec.appendChild(el('h2', null, b.ad));
+  const group = el('div','group');
+  b.urunler.forEach(u=>{
+    const row = el('div','row');
+    const left = el('div');
+    const name = el('div','name', u.ad);
+    if(u.rozet) name.appendChild(el('span','badge', u.rozet));
+    left.appendChild(name);
+    if(u.not) left.appendChild(el('div','desc', u.not));
+    row.appendChild(left);
+    row.appendChild(el('div','price', u.fiyat));
+    group.appendChild(row);
+  });
+  sec.appendChild(group);
+  menu.appendChild(sec);
+});
+const links=[...nav.querySelectorAll('a')];
+const obs=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.hash==="#"+e.target.id))}
+}),{rootMargin:"-45% 0px -50% 0px"});
+document.querySelectorAll('section').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
