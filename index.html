@@ -2,33 +2,22 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <title>MENÜ</title>
 <style>
-  /* ===== Apple HIG · SF Pro · systemBlue ===== */
+  /* ===== Apple HIG · SF Pro · Light (white) · systemBlue ===== */
   :root{
     --blue:#007AFF;
-    --bg:#F2F2F7;          /* systemGrey6 grouped background */
+    --bg:#F2F2F7;
     --card:#FFFFFF;
     --label:#000000;
     --secondary:rgba(60,60,67,.60);
     --tertiary:rgba(60,60,67,.30);
-    --sep:rgba(60,60,67,.29);
-    --fill:#E9E9EB;        /* segmented, unselected */
-    --tint:rgba(0,122,255,.12);
-  }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --blue:#0A84FF;
-      --bg:#000000;
-      --card:#1C1C1E;
-      --label:#FFFFFF;
-      --secondary:rgba(235,235,245,.60);
-      --tertiary:rgba(235,235,245,.30);
-      --sep:rgba(84,84,88,.55);
-      --fill:#2C2C2E;
-      --tint:rgba(10,132,255,.20);
-    }
+    --sep:rgba(60,60,67,.22);
+    --fill:#EFEFF4;
+    --tint:rgba(0,122,255,.10);
+    --imgbg:#FFFFFF;
+    --shadow:0 1px 0 rgba(0,0,0,.03);
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html{scroll-behavior:smooth}
@@ -36,58 +25,93 @@
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",system-ui,sans-serif;
     background:var(--bg);color:var(--label);
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-    padding-bottom:96px;letter-spacing:-.01em;
+    padding-bottom:60px;letter-spacing:-.01em;
   }
-  /* HEADER — iOS large title */
-  header{background:var(--card);padding:28px 20px 20px;border-bottom:.5px solid var(--sep)}
-  .mark{
-    width:56px;height:56px;border-radius:14px;background:var(--blue);color:#fff;
-    display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;
-    margin-bottom:14px;letter-spacing:0;
-  }
-  header h1{font-size:34px;line-height:1.06;font-weight:700;letter-spacing:-.02em}
+  header{background:var(--card);padding:30px 20px 20px;border-bottom:.5px solid var(--sep)}
+  header h1{font-size:34px;line-height:1.05;font-weight:700;letter-spacing:-.022em}
   header p{color:var(--secondary);font-size:15px;margin-top:6px;font-weight:400}
-  /* SEGMENTED NAV */
-  nav{
-    position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 86%, transparent);
-    backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
-    display:flex;gap:8px;overflow-x:auto;padding:12px 16px;border-bottom:.5px solid var(--sep);
-    scrollbar-width:none;
-  }
+  /* Liquid Glass — floating translucent nav bar */
+  nav{position:sticky;top:10px;z-index:20;margin:10px 12px 2px;padding:7px 8px;border-radius:22px;
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
+    border:.5px solid rgba(255,255,255,.7);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.75), 0 6px 22px rgba(0,0,0,.10);
+    display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
   nav::-webkit-scrollbar{display:none}
-  nav a{
-    flex:0 0 auto;text-decoration:none;color:var(--label);background:var(--fill);
-    padding:7px 14px;border-radius:980px;font-size:14px;font-weight:500;white-space:nowrap;letter-spacing:-.01em;
-    transition:background .15s,color .15s;
-  }
-  nav a.active{background:var(--blue);color:#fff;font-weight:600}
-  /* SECTION */
-  section{padding:26px 16px 0}
-  section h2{
-    font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
-    color:var(--secondary);margin:0 4px 8px;
-  }
-  /* GROUPED INSET LIST */
-  .group{background:var(--card);border-radius:12px;overflow:hidden}
-  .row{
-    display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
-    padding:13px 16px;position:relative;
-  }
-  .row + .row::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
-  .row .name{font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.25}
-  .row .desc{color:var(--secondary);font-size:14px;margin-top:2px;line-height:1.3;font-weight:400}
-  .row .price{font-size:17px;font-weight:600;color:var(--blue);white-space:nowrap;letter-spacing:-.02em}
-  .badge{
-    display:inline-block;font-size:11px;font-weight:600;color:var(--blue);background:var(--tint);
-    padding:2px 7px;border-radius:6px;margin-left:8px;vertical-align:middle;letter-spacing:0;
-  }
-  footer{text-align:center;color:var(--tertiary);font-size:12px;padding:30px 16px;letter-spacing:-.01em}
+  nav a{flex:0 0 auto;text-decoration:none;color:var(--secondary);background:transparent;
+    padding:7px 15px;border-radius:980px;font-size:14px;font-weight:600;white-space:nowrap;transition:.2s}
+  nav a.active{background:var(--blue);color:#fff;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 2px 8px rgba(0,122,255,.35)}
+  section{padding:26px 16px 0;animation:rise .5s both}
+  section h2{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--secondary);margin:0 4px 8px}
+  .group{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+  .row{display:flex;align-items:center;gap:13px;padding:11px 14px;position:relative;
+    cursor:pointer;transition:background .12s,transform .12s;-webkit-user-select:none;user-select:none}
+  .row:active{background:var(--fill);transform:scale(.992)}
+  .row + .row::before{content:"";position:absolute;top:0;left:71px;right:0;height:.5px;background:var(--sep)}
+  .thumb{flex:0 0 auto;width:52px;height:52px;border-radius:12px;background:var(--imgbg);
+    border:.5px solid var(--sep);display:flex;align-items:center;justify-content:center;font-size:27px;overflow:hidden}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .rmid{flex:1 1 auto;min-width:0}
+  .rmid .name{font-size:16px;font-weight:600;letter-spacing:-.02em;line-height:1.25}
+  .rmid .desc{color:var(--secondary);font-size:13px;margin-top:1px;line-height:1.3;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rend{flex:0 0 auto;display:flex;align-items:center;gap:5px}
+  .price{font-size:16px;font-weight:600;color:var(--blue);white-space:nowrap;letter-spacing:-.02em}
+  .chev{color:var(--tertiary);font-size:19px;font-weight:600;line-height:1}
+  .badge{display:inline-block;font-size:10.5px;font-weight:600;color:var(--blue);background:var(--tint);
+    padding:2px 7px;border-radius:6px;margin-left:7px;vertical-align:middle;letter-spacing:0}
+  footer{text-align:center;color:var(--tertiary);font-size:12px;padding:30px 16px}
   footer b{color:var(--secondary);font-weight:500}
-  .pill{
-    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
-    background:var(--label);color:var(--card);font-size:13px;font-weight:500;
-    padding:10px 18px;border-radius:980px;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:40;letter-spacing:-.01em;
-  }
+
+  /* ===== DETAIL SHEET ===== */
+  .overlay{position:fixed;inset:0;z-index:60;display:none}
+  .overlay.open{display:block}
+  .backdrop{position:absolute;inset:0;opacity:0;transition:opacity .3s ease}
+  .overlay.show .backdrop{opacity:1;background:rgba(0,0,0,.32);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+  /* Liquid Glass — translucent sheet material */
+  .panel{position:absolute;left:0;right:0;bottom:0;max-height:92vh;
+    background:rgba(255,255,255,.82);
+    backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);
+    border-top:.5px solid rgba(255,255,255,.7);
+    border-radius:22px 22px 0 0;transform:translateY(100%);
+    transition:transform .42s cubic-bezier(.32,.72,0,1);overflow-y:auto;-webkit-overflow-scrolling:touch;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 -8px 44px rgba(0,0,0,.22)}
+  .overlay.show .panel{transform:translateY(0)}
+  .grab{width:40px;height:5px;border-radius:3px;background:var(--tertiary);margin:9px auto 2px}
+  .sheetX{position:sticky;top:0;display:flex;justify-content:flex-end;padding:6px 14px 0;z-index:2}
+  .sheetX button{width:32px;height:32px;border:.5px solid rgba(255,255,255,.6);border-radius:50%;
+    background:rgba(255,255,255,.5);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+    color:var(--secondary);font-size:15px;font-weight:600;cursor:pointer;line-height:1;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.75), 0 2px 8px rgba(0,0,0,.12)}
+  .hero{margin:2px 20px 0;height:220px;border-radius:16px;background:var(--imgbg);border:.5px solid var(--sep);
+    display:flex;align-items:center;justify-content:center;font-size:92px;overflow:hidden}
+  .hero img{width:100%;height:100%;object-fit:cover}
+  .sheetbody{padding:18px 22px 40px}
+  .sheetbody .stitle{font-size:26px;font-weight:700;letter-spacing:-.022em;line-height:1.1}
+  .sheetbody .sprice{font-size:20px;font-weight:700;color:var(--blue);margin-top:4px;letter-spacing:-.02em}
+  .sheetbody .sdesc{font-size:16px;line-height:1.45;color:var(--label);margin-top:12px}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .tag{font-size:12.5px;font-weight:600;color:var(--blue);background:var(--tint);padding:5px 11px;border-radius:980px}
+  .block{margin-top:24px}
+  .block h3{font-size:13px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--secondary);margin-bottom:12px}
+  /* ingredients */
+  .ing{display:flex;flex-wrap:wrap;gap:16px 12px}
+  .ing .chip{width:62px;display:flex;flex-direction:column;align-items:center;gap:7px;animation:rise .4s both}
+  .ing .chip .cimg{width:48px;height:48px;border-radius:50%;background:var(--imgbg);border:.5px solid var(--sep);
+    display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;box-shadow:var(--shadow)}
+  .ing .chip .cimg img{width:100%;height:100%;object-fit:cover}
+  .ing .chip .cname{font-size:11.5px;color:var(--secondary);text-align:center;line-height:1.15;font-weight:500}
+  /* keypoints */
+  .kp{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .kp li{display:flex;gap:10px;font-size:15.5px;line-height:1.4;align-items:flex-start;animation:rise .4s both}
+  .kp li .ic{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--tint);color:var(--blue);
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-top:1px}
+  .health{background:var(--fill);border-radius:14px;padding:15px 16px;display:flex;gap:12px;animation:rise .4s both}
+  .health .lg{flex:0 0 auto;font-size:22px;line-height:1.2}
+  .health .ht{font-size:14.5px;line-height:1.5;color:var(--label)}
+  .health .ht b{font-weight:600}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -96,52 +120,140 @@
 const MENU = {
   isim: "Moda Coffee & Garden",
   slogan: "Nitelikli kahve · Ev yapımı tatlılar · Brunch",
-  logoHarf: "M",
   bolumler: [
     { ad:"Sıcak Kahveler", urunler:[
-      { ad:"Espresso", not:"Tek / Duble", fiyat:"₺70" },
-      { ad:"Americano", not:"Günün çekirdeği", fiyat:"₺95" },
-      { ad:"Flat White", not:"Çift shot, ipeksi süt", fiyat:"₺120", rozet:"Popüler" },
-      { ad:"Cappuccino", not:"", fiyat:"₺110" },
-      { ad:"Türk Kahvesi", not:"Sade / az / orta / şekerli", fiyat:"₺75" },
+      { ad:"Espresso", fiyat:"₺70", img:"☕", aciklama:"Yoğun, tam gövdeli tek shot.",
+        malzeme:[{a:"Arabica",i:"🫘"},{a:"Su",i:"💧"}],
+        oz:["%100 Arabica çekirdek","Günlük taze öğütülür","30 ml yoğun aroma","Sütsüz & şekersiz"],
+        saglik:"Neredeyse kalorisiz (~5 kcal). İçindeki doğal kafein <b>odaklanmayı ve metabolizmayı</b> destekler; antioksidan bakımından zengindir.",
+        etiket:["~5 kcal","Şekersiz","Vegan"] },
+      { ad:"Americano", fiyat:"₺95", img:"☕", aciklama:"Espresso + sıcak su, yumuşak uzun içim.",
+        malzeme:[{a:"Espresso",i:"☕"},{a:"Sıcak su",i:"💧"}],
+        oz:["Çift shot espresso bazlı","Sıcak su ile açılır","Uzun ve dengeli içim","Sütsüz"],
+        saglik:"Neredeyse kalorisiz. Gün boyu enerji için ideal; latte kadar <b>mideyi ağırlaştırmaz</b>.",
+        etiket:["~10 kcal","Şekersiz","Vegan"] },
+      { ad:"Flat White", fiyat:"₺120", img:"☕", rozet:"Popüler", aciklama:"Çift shot espresso, ipeksi mikroköpük.",
+        malzeme:[{a:"Espresso",i:"☕"},{a:"Süt",i:"🥛"}],
+        oz:["Çift shot espresso","İpeksi buharlı süt","Yoğun kahve tadı","İnce, az köpük"],
+        saglik:"Süt kaynaklı <b>protein ve kalsiyum</b> içerir. Şeker eklenmezse dengeli bir ara öğün olur.",
+        etiket:["Yüksek kafein","Şef önerisi"] },
+      { ad:"Cappuccino", fiyat:"₺110", img:"☕", aciklama:"Espresso, süt ve bol köpük dengesi.",
+        malzeme:[{a:"Espresso",i:"☕"},{a:"Süt",i:"🥛"},{a:"Köpük",i:"☁️"}],
+        oz:["1/3 espresso","1/3 sıcak süt","1/3 kadifemsi köpük","Klasik İtalyan dengesi"],
+        saglik:"Kalsiyum kaynağı süt ile. Öğle sonrası hafif bir mola için ideal.",
+        etiket:["Klasik"] },
+      { ad:"Türk Kahvesi", fiyat:"₺75", img:"☕", aciklama:"Geleneksel, közde pişmiş.",
+        malzeme:[{a:"Kahve",i:"🫘"},{a:"Su",i:"💧"},{a:"Lokum",i:"🍬"}],
+        oz:["Cezvede yavaş pişirilir","Yanında lokum & su","Sade / az / orta / şekerli","Bol köpüklü"],
+        saglik:"<b>Antioksidan</b> bakımından zengin. Şekersiz tercih edilirse kalorisi çok düşüktür.",
+        etiket:["Geleneksel","Vegan"] },
     ]},
     { ad:"Soğuk Kahveler", urunler:[
-      { ad:"Iced Latte", not:"Buzlu, taze demleme", fiyat:"₺120" },
-      { ad:"Cold Brew", not:"18 saat demlenmiş", fiyat:"₺130", rozet:"Yeni" },
-      { ad:"Ice Americano", not:"", fiyat:"₺105" },
+      { ad:"Iced Latte", fiyat:"₺120", img:"🧊", aciklama:"Buzlu, taze demleme, ferah.",
+        malzeme:[{a:"Espresso",i:"☕"},{a:"Süt",i:"🥛"},{a:"Buz",i:"🧊"}],
+        oz:["Espresso + soğuk süt","Bol buz","Ferah ve hafif","İsteğe göre şeker"],
+        saglik:"Sıcak günlerde serinletir; süt ile <b>kalsiyum</b> alırsınız. Yağsız süt seçeneği mevcuttur.",
+        etiket:["Serinletici"] },
+      { ad:"Cold Brew", fiyat:"₺130", img:"🧊", rozet:"Yeni", aciklama:"18 saat soğuk demlenmiş.",
+        malzeme:[{a:"Kahve",i:"🫘"},{a:"Soğuk su",i:"💧"},{a:"Buz",i:"🧊"}],
+        oz:["18 saat soğuk demleme","Düşük asit","Doğal tatlı, yumuşak","Sütsüz servis"],
+        saglik:"Soğuk demleme <b>asidi %60'a kadar düşürür</b> — mideyi yormaz, sindirimi kolaydır.",
+        etiket:["Düşük asit","Vegan","Şef önerisi"] },
+      { ad:"Ice Americano", fiyat:"₺105", img:"🧊", aciklama:"Buzlu, sade, kalorisiz ferahlık.",
+        malzeme:[{a:"Espresso",i:"☕"},{a:"Su",i:"💧"},{a:"Buz",i:"🧊"}],
+        oz:["Espresso + soğuk su + buz","Sütsüz","Neredeyse kalorisiz","Uzun içim"],
+        saglik:"Şeker ve süt eklenmediğinde <b>~10 kcal</b>. Diyet dostu serinletici.",
+        etiket:["~10 kcal","Vegan"] },
     ]},
     { ad:"Tatlılar", urunler:[
-      { ad:"San Sebastian Cheesecake", not:"Dilim", fiyat:"₺150", rozet:"Çok satan" },
-      { ad:"Dondurmalı Brownie", not:"Sıcak servis", fiyat:"₺135" },
-      { ad:"Tiramisu", not:"Ev yapımı", fiyat:"₺140" },
-      { ad:"Cookie", not:"Belçika çikolatalı", fiyat:"₺65" },
+      { ad:"San Sebastian Cheesecake", fiyat:"₺150", img:"🍰", rozet:"Çok satan", aciklama:"Üstü karamelize, içi akışkan.",
+        malzeme:[{a:"Krem peynir",i:"🧀"},{a:"Yumurta",i:"🥚"},{a:"Krema",i:"🥛"},{a:"Şeker",i:"🍬"}],
+        oz:["Günlük taze yapılır","Üstü karamelize kabuk","İçi kremamsı, akışkan","Kahveyle mükemmel"],
+        saglik:"Yüksek <b>kalsiyum ve protein</b> içeren krem peynir bazlı. Un oranı düşüktür; tek dilim paylaşımlıktır.",
+        etiket:["Şefin imzası","Az unlu"] },
+      { ad:"Dondurmalı Brownie", fiyat:"₺135", img:"🍫", aciklama:"Sıcak brownie, soğuk dondurma.",
+        malzeme:[{a:"Çikolata",i:"🍫"},{a:"Un",i:"🌾"},{a:"Yumurta",i:"🥚"},{a:"Dondurma",i:"🍨"}],
+        oz:["Sıcak servis edilir","Bitter çikolatalı","Yanında vanilya dondurma","Sıcak-soğuk kontrast"],
+        saglik:"Bitter çikolata <b>flavonoid antioksidanları</b> içerir. Paylaşımlık porsiyon önerilir.",
+        etiket:["Paylaşımlık"] },
+      { ad:"Tiramisu", fiyat:"₺140", img:"🍮", aciklama:"Ev yapımı, gerçek mascarpone.",
+        malzeme:[{a:"Mascarpone",i:"🧀"},{a:"Espresso",i:"☕"},{a:"Kedidili",i:"🍪"},{a:"Kakao",i:"🍫"}],
+        oz:["Gerçek mascarpone","Espresso'ya batırılmış kedidili","Kakao ile tamamlanır","Hafif dokulu"],
+        saglik:"Mascarpone <b>kalsiyum</b> sağlar; içindeki espresso ekstra kafein verir.",
+        etiket:["Ev yapımı"] },
+      { ad:"Cookie", fiyat:"₺65", img:"🍪", aciklama:"İçi yumuşak, Belçika çikolatalı.",
+        malzeme:[{a:"Un",i:"🌾"},{a:"Çikolata",i:"🍫"},{a:"Tereyağı",i:"🧈"}],
+        oz:["Günlük pişer","Belçika çikolata parçaları","İçi yumuşak, dışı çıtır","Tek kişilik"],
+        saglik:"Tek başına küçük bir keyif; kahvenin yanında ideal atıştırmalık.",
+        etiket:["Günlük taze"] },
     ]},
     { ad:"Brunch & Atıştırmalık", urunler:[
-      { ad:"Serpme Kahvaltı", not:"2 kişilik", fiyat:"₺650", rozet:"Hafta sonu" },
-      { ad:"Avokado Toast", not:"Sourdough ekmek, poşe yumurta", fiyat:"₺220" },
-      { ad:"Simit Tabağı", not:"Peynir, zeytin, domates", fiyat:"₺160" },
+      { ad:"Serpme Kahvaltı", fiyat:"₺650", img:"🍳", rozet:"Hafta sonu", aciklama:"2 kişilik, 20+ çeşit.",
+        malzeme:[{a:"Peynir",i:"🧀"},{a:"Zeytin",i:"🫒"},{a:"Yumurta",i:"🥚"},{a:"Domates",i:"🍅"},{a:"Bal",i:"🍯"}],
+        oz:["2 kişilik zengin sofra","Köy peynirleri & zeytinler","Sıcak menemen / omlet","Sınırsız çay"],
+        saglik:"Dengeli <b>protein, lif ve sağlıklı yağ</b> kaynağı. Güne güçlü başlangıç için ideal.",
+        etiket:["2 kişilik","Dengeli"] },
+      { ad:"Avokado Toast", fiyat:"₺220", img:"🥑", aciklama:"Sourdough, poşe yumurta.",
+        malzeme:[{a:"Ekmek",i:"🍞"},{a:"Avokado",i:"🥑"},{a:"Yumurta",i:"🥚"},{a:"Pul biber",i:"🌶️"}],
+        oz:["Ekşi maya (sourdough) ekmek","Taze ezilmiş avokado","Poşe yumurta","Pul biber & zeytinyağı"],
+        saglik:"Avokado <b>sağlıklı Omega yağları</b>, yumurta kaliteli protein sağlar. Doyurucu ve hafif.",
+        etiket:["Omega-3","Yüksek protein","Şef önerisi"] },
+      { ad:"Simit Tabağı", fiyat:"₺160", img:"🥯", aciklama:"Peynir, zeytin, domates.",
+        malzeme:[{a:"Simit",i:"🥯"},{a:"Peynir",i:"🧀"},{a:"Zeytin",i:"🫒"},{a:"Domates",i:"🍅"}],
+        oz:["Taze simit","Beyaz peynir & kaşar","Zeytin, domates, salatalık","Klasik Türk lezzeti"],
+        saglik:"Susam <b>kalsiyum ve sağlıklı yağ</b> kaynağıdır. Hafif ve pratik bir seçenek.",
+        etiket:["Vejetaryen"] },
     ]},
     { ad:"Soğuk İçecekler", urunler:[
-      { ad:"Ev Yapımı Limonata", not:"Nane & zencefil", fiyat:"₺85" },
-      { ad:"Taze Portakal Suyu", not:"", fiyat:"₺95" },
-      { ad:"Milkshake", not:"Çilek / muz / çikolata", fiyat:"₺120" },
+      { ad:"Ev Yapımı Limonata", fiyat:"₺85", img:"🍋", aciklama:"Nane & zencefil, taze sıkım.",
+        malzeme:[{a:"Limon",i:"🍋"},{a:"Nane",i:"🌿"},{a:"Zencefil",i:"🫚"}],
+        oz:["Taze sıkılmış limon","Nane yaprakları","Bir tutam zencefil","Az şekerli"],
+        saglik:"<b>C vitamini</b> deposu; zencefil sindirime yardımcı olur. Yapay tatlandırıcı içermez.",
+        etiket:["C vitamini","Vegan","Taze sıkım"] },
+      { ad:"Taze Portakal Suyu", fiyat:"₺95", img:"🍊", aciklama:"%100 taze, katkısız.",
+        malzeme:[{a:"Portakal",i:"🍊"}],
+        oz:["Anında sıkılır","%100 portakal","Şeker/su eklenmez","Posalı seçenek"],
+        saglik:"Doğal <b>C vitamini ve antioksidan</b>. Bağışıklığı destekler, katkısızdır.",
+        etiket:["%100 doğal","C vitamini","Vegan"] },
+      { ad:"Milkshake", fiyat:"₺120", img:"🥤", aciklama:"Çilek / muz / çikolata.",
+        malzeme:[{a:"Süt",i:"🥛"},{a:"Dondurma",i:"🍨"},{a:"Meyve",i:"🍓"}],
+        oz:["Gerçek dondurma ile","Çilek, muz veya çikolata","Yoğun ve kremamsı","Üstü krem şanti"],
+        saglik:"Süt ve meyve <b>kalsiyum + vitamin</b> sağlar. Keyifli, doyurucu bir ikram.",
+        etiket:["Çocuk favorisi"] },
     ]},
   ]
 };
 </script>
 
 <header>
-  <div class="mark" id="logo"></div>
   <h1 id="isim"></h1>
   <p id="slogan"></p>
 </header>
 <nav id="nav"></nav>
 <main id="menu"></main>
 <footer>Dijital menü · <b id="fname"></b> · hazırlayan <b>Roy</b></footer>
-<div class="pill">Örnek dijital menü — QR ile açılır</div>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="backdrop" id="backdrop"></div>
+  <div class="panel" id="panel" role="dialog" aria-modal="true">
+    <div class="grab"></div>
+    <div class="sheetX"><button id="closeBtn" aria-label="Kapat">✕</button></div>
+    <div class="hero" id="hero"></div>
+    <div class="sheetbody">
+      <div class="stitle" id="s_title"></div>
+      <div class="sprice" id="s_price"></div>
+      <div class="sdesc" id="s_desc"></div>
+      <div class="tags" id="s_tags"></div>
+      <div class="block"><h3>Malzemeler</h3><div class="ing" id="s_ing"></div></div>
+      <div class="block"><h3>Öne Çıkanlar</h3><ul class="kp" id="s_kp"></ul></div>
+      <div class="block"><h3>Sağlık & Fayda</h3>
+        <div class="health"><div class="lg">🌿</div><div class="ht" id="s_health"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-document.getElementById('logo').textContent = MENU.logoHarf;
 document.getElementById('isim').textContent = MENU.isim;
 document.getElementById('slogan').textContent = MENU.slogan;
 document.getElementById('fname').textContent = MENU.isim;
@@ -149,39 +261,88 @@ document.title = MENU.isim + " · Menü";
 
 const nav = document.getElementById('nav');
 const menu = document.getElementById('menu');
-function el(tag, cls, text){
-  const n = document.createElement(tag);
-  if(cls) n.className = cls;
-  if(text != null) n.textContent = text;
-  return n;
+function el(t,c,x){const n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;}
+function imgOrGlyph(container,foto,glyph,alt){
+  container.textContent="";
+  if(foto){const im=document.createElement('img');im.src=foto;im.alt=alt||"";container.appendChild(im);}
+  else container.textContent=glyph||"•";
 }
-MENU.bolumler.forEach((b,i)=>{
-  const id = "b"+i;
-  const a = el('a', i===0 ? 'active' : '', b.ad);
-  a.href = "#"+id; nav.appendChild(a);
 
-  const sec = el('section'); sec.id = id;
-  sec.appendChild(el('h2', null, b.ad));
-  const group = el('div','group');
+MENU.bolumler.forEach((b,i)=>{
+  const id="b"+i;
+  const a=el('a',i===0?'active':'',b.ad);a.href="#"+id;nav.appendChild(a);
+  const sec=el('section');sec.id=id;sec.style.animationDelay=(i*0.05)+"s";
+  sec.appendChild(el('h2',null,b.ad));
+  const group=el('div','group');
   b.urunler.forEach(u=>{
-    const row = el('div','row');
-    const left = el('div');
-    const name = el('div','name', u.ad);
-    if(u.rozet) name.appendChild(el('span','badge', u.rozet));
-    left.appendChild(name);
-    if(u.not) left.appendChild(el('div','desc', u.not));
-    row.appendChild(left);
-    row.appendChild(el('div','price', u.fiyat));
+    const row=el('div','row');
+    const thumb=el('div','thumb');imgOrGlyph(thumb,u.foto,u.img,u.ad);
+    const mid=el('div','rmid');
+    const name=el('div','name',u.ad);
+    if(u.rozet)name.appendChild(el('span','badge',u.rozet));
+    mid.appendChild(name);
+    if(u.aciklama)mid.appendChild(el('div','desc',u.aciklama));
+    const end=el('div','rend');
+    end.appendChild(el('div','price',u.fiyat));
+    end.appendChild(el('div','chev','›'));
+    row.appendChild(thumb);row.appendChild(mid);row.appendChild(end);
+    row.addEventListener('click',()=>openSheet(u));
     group.appendChild(row);
   });
-  sec.appendChild(group);
-  menu.appendChild(sec);
+  sec.appendChild(group);menu.appendChild(sec);
 });
+
 const links=[...nav.querySelectorAll('a')];
 const obs=new IntersectionObserver(es=>es.forEach(e=>{
   if(e.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.hash==="#"+e.target.id))}
 }),{rootMargin:"-45% 0px -50% 0px"});
 document.querySelectorAll('section').forEach(s=>obs.observe(s));
+
+const overlay=document.getElementById('overlay');
+const panel=document.getElementById('panel');
+function openSheet(u){
+  document.getElementById('s_title').textContent=u.ad;
+  document.getElementById('s_price').textContent=u.fiyat;
+  document.getElementById('s_desc').textContent=u.aciklama||"";
+  imgOrGlyph(document.getElementById('hero'),u.foto,u.img,u.ad);
+  const tg=document.getElementById('s_tags');tg.textContent="";
+  (u.etiket||[]).forEach(t=>tg.appendChild(el('span','tag',t)));
+  const ing=document.getElementById('s_ing');ing.textContent="";
+  (u.malzeme||[]).forEach((m,idx)=>{
+    const c=el('div','chip');c.style.animationDelay=(idx*0.04)+"s";
+    const ci=el('div','cimg');imgOrGlyph(ci,m.foto,m.i,m.a);
+    c.appendChild(ci);c.appendChild(el('div','cname',m.a));
+    ing.appendChild(c);
+  });
+  const kp=document.getElementById('s_kp');kp.textContent="";
+  (u.oz||[]).forEach((k,idx)=>{
+    const li=el('li');li.style.animationDelay=(idx*0.04)+"s";
+    li.appendChild(el('span','ic','✓'));li.appendChild(el('span',null,k));kp.appendChild(li);
+  });
+  renderRich(document.getElementById('s_health'),u.saglik||"");
+  panel.scrollTop=0;
+  overlay.classList.add('open');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>overlay.classList.add('show')));
+  document.body.style.overflow='hidden';
+}
+function closeSheet(){
+  overlay.classList.remove('show');
+  document.body.style.overflow='';
+  setTimeout(()=>overlay.classList.remove('open'),420);
+}
+function renderRich(node,str){
+  node.textContent="";
+  const parts=str.split(/(<b>|<\/b>)/);let bold=false;
+  parts.forEach(p=>{
+    if(p==="<b>"){bold=true;return;}
+    if(p==="</b>"){bold=false;return;}
+    if(!p)return;
+    node.appendChild(bold?el('b',null,p):document.createTextNode(p));
+  });
+}
+document.getElementById('closeBtn').addEventListener('click',closeSheet);
+document.getElementById('backdrop').addEventListener('click',closeSheet);
+document.addEventListener('keydown',e=>{if(e.key==="Escape"&&overlay.classList.contains('open'))closeSheet();});
 </script>
 </body>
 </html>
