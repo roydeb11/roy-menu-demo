@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Zihin — Zihinden Matematik</title>
+<meta name="description" content="Sonsuz, her seferinde farklı zihinden matematik antrenmanı. Toplama, çıkarma, çarpma, bölme, yüzde ve günlük hayat problemleri.">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Zihin">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<!-- cama anlam veren ışık: yalnızca mavi + beyaz parlamalar -->
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="streak-flare" id="flare" aria-hidden="true"></div>
+
+<!-- SF Symbols ruhunda ikon seti (yuvarlak uçlu, tek ağırlık) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="i-infinity"><path d="M4 12c0-2.2 1.8-4 4-4 3.4 0 4.6 8 8 8 2.2 0 4-1.8 4-4s-1.8-4-4-4c-3.4 0-4.6 8-8 8-2.2 0-4-1.8-4-4Z"
+       fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-timer"><circle cx="12" cy="13.2" r="7.6" fill="none" stroke="currentColor" stroke-width="1.9"/>
+       <path d="M12 9.4v4.1l2.6 1.7M9.4 3.2h5.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g>
+    <g id="i-chart"><path d="M4.5 19.5V13m5 6.5V6.2m5 13.3v-8.6m5 8.6V9" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></g>
+    <g id="i-back"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-again"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4.2V9h-4.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </defs>
+</svg>
+
+<main id="app">
+
+<!-- ═══════════════════════════ GİRİŞ ═══════════════════════════ -->
+<section class="screen is-active" id="screen-home">
+  <header class="hero">
+    <div class="mark glass glass--blue">Z</div>
+    <h1 class="t-largeTitle rounded">Zihin</h1>
+    <p class="t-subhead dim">Zihinden matematik · sonsuz ve her seferinde farklı</p>
+  </header>
+
+  <div class="stack">
+    <button class="mode-btn glass glass--blue glass--interactive" id="btn-endless">
+      <span class="ico"><svg width="30" height="30" viewBox="0 0 24 24"><use href="#i-infinity"/></svg></span>
+      <span class="meta grow">
+        <span class="t-headline">Sonsuz Antrenman</span>
+        <span class="t-footnote dim">Bitmez. Süre yok, sınır yok — sürekli yeni soru.</span>
+      </span>
+      <span class="t-footnote dim-2 tnum" id="best-endless">0</span>
+    </button>
+
+    <button class="mode-btn glass glass--interactive" id="btn-timed">
+      <span class="ico"><svg width="28" height="28" viewBox="0 0 24 24"><use href="#i-timer"/></svg></span>
+      <span class="meta grow">
+        <span class="t-headline">60 Saniye</span>
+        <span class="t-footnote dim">Hız turu — bir dakikada kaç soru?</span>
+      </span>
+      <span class="t-footnote dim-2 tnum" id="best-timed">0</span>
+    </button>
+
+    <button class="mode-btn glass glass--interactive" id="btn-stats">
+      <span class="ico"><svg width="28" height="28" viewBox="0 0 24 24"><use href="#i-chart"/></svg></span>
+      <span class="meta grow">
+        <span class="t-headline">İstatistikler</span>
+        <span class="t-footnote dim">Hangi konuda güçlüsün?</span>
+      </span>
+    </button>
+  </div>
+
+  <div class="glass card">
+    <div class="row spread" style="margin-bottom:12px">
+      <span class="t-headline">Konular</span>
+      <span class="t-footnote dim-2">dokunarak aç / kapat</span>
+    </div>
+    <div class="chips">
+      <button class="chip" data-cat="add"    aria-pressed="true">+ Toplama</button>
+      <button class="chip" data-cat="sub"    aria-pressed="true">− Çıkarma</button>
+      <button class="chip" data-cat="mul"    aria-pressed="true">× Çarpma</button>
+      <button class="chip" data-cat="div"    aria-pressed="true">÷ Bölme</button>
+      <button class="chip" data-cat="pct"    aria-pressed="true">% Yüzde</button>
+      <button class="chip" data-cat="daily"  aria-pressed="true">Günlük Hayat</button>
+      <button class="chip" data-cat="visual" aria-pressed="true">Görsel</button>
+    </div>
+  </div>
+
+  <div class="glass card">
+    <div class="row spread">
+      <div class="center grow"><div class="t-title3 rounded tnum" id="home-level">1</div><div class="t-caption dim-2">SEVİYE</div></div>
+      <div class="center grow"><div class="t-title3 rounded tnum" id="home-acc">0%</div><div class="t-caption dim-2">DOĞRULUK</div></div>
+      <div class="center grow"><div class="t-title3 rounded tnum" id="home-asked">0</div><div class="t-caption dim-2">SORU</div></div>
+    </div>
+  </div>
+
+  <button class="btn t-subhead" id="haptic-toggle" aria-pressed="true" style="min-height:44px">Haptik: Açık</button>
+
+  <p class="t-caption dim-2 center" style="padding:4px 0 8px">Ana ekrana ekleyerek tam ekran uygulama gibi kullanabilirsin.</p>
+</section>
+
+<!-- ═══════════════════════════ OYUN ═══════════════════════════ -->
+<section class="screen" id="screen-play">
+  <div class="hud">
+    <button class="hud-back glass glass--interactive" data-back aria-label="Geri">
+      <svg width="22" height="22" viewBox="0 0 24 24"><use href="#i-back"/></svg>
+    </button>
+    <div class="hud-item glass"><span class="v rounded tnum" id="hud-score">0</span><span class="k">Puan</span></div>
+    <div class="hud-item glass"><span class="v rounded tnum" id="hud-streak">0</span><span class="k">Seri</span></div>
+    <div class="hud-item glass"><span class="v rounded tnum" id="hud-level">1</span><span class="k">Seviye</span></div>
+    <div class="hud-item glass glass--blue hidden" id="hud-time"><span class="v rounded tnum" id="hud-time-v">60</span><span class="k">Süre</span></div>
+  </div>
+
+  <div class="level-track"><div class="level-fill" id="level-fill" style="width:10%"></div></div>
+
+  <div class="qcard glass" id="qcard">
+    <span class="cat-badge" id="cat-badge">Toplama</span>
+    <div class="qexpr rounded tnum" id="qexpr">7 + 5</div>
+    <p class="qtext hidden" id="qtext"></p>
+    <div class="qvisual hidden" id="qvisual"></div>
+  </div>
+
+  <div class="answers" id="answers">
+    <button class="ans glass--interactive"></button>
+    <button class="ans glass--interactive"></button>
+    <button class="ans glass--interactive"></button>
+    <button class="ans glass--interactive"></button>
+  </div>
+
+  <div class="feedback t-subhead" id="feedback" aria-live="polite"></div>
+</section>
+
+<!-- ═════════════════════════ ÖZET (60 sn) ═════════════════════════ -->
+<section class="screen" id="screen-summary">
+  <div style="height:24px"></div>
+  <div class="glass card center">
+    <p class="t-subhead dim">Süre doldu</p>
+    <div class="t-largeTitle rounded tnum accent" id="sum-score">0</div>
+    <p class="t-footnote dim-2">puan · rekor <span id="sum-best" class="tnum">0</span></p>
+  </div>
+  <div class="glass card">
+    <div class="row spread">
+      <div class="center grow"><div class="t-title3 rounded tnum" id="sum-correct">0/0</div><div class="t-caption dim-2">DOĞRU</div></div>
+      <div class="center grow"><div class="t-title3 rounded tnum" id="sum-streak">0</div><div class="t-caption dim-2">EN UZUN SERİ</div></div>
+      <div class="center grow"><div class="t-title3 rounded tnum" id="sum-level">1</div><div class="t-caption dim-2">SEVİYE</div></div>
+    </div>
+  </div>
+  <div class="grow"></div>
+  <button class="btn btn--primary" id="btn-again">
+    <span class="row" style="gap:8px"><svg width="19" height="19" viewBox="0 0 24 24"><use href="#i-again"/></svg> Bir tur daha</span>
+  </button>
+  <button class="btn" id="btn-summary-home">Ana ekran</button>
+  <div style="height:6px"></div>
+</section>
+
+<!-- ═══════════════════════ İSTATİSTİKLER ═══════════════════════ -->
+<section class="screen" id="screen-stats">
+  <div class="row" style="padding:6px 0 2px">
+    <button class="hud-back glass glass--interactive" id="btn-stats-back" aria-label="Geri">
+      <svg width="22" height="22" viewBox="0 0 24 24"><use href="#i-back"/></svg>
+    </button>
+    <h2 class="t-title2 grow" style="margin:0 0 0 6px">İstatistikler</h2>
+  </div>
+
+  <div class="glass card">
+    <div class="row spread">
+      <div class="center grow"><div class="t-title3 rounded tnum" id="st-asked">0</div><div class="t-caption dim-2">SORU</div></div>
+      <div class="center grow"><div class="t-title3 rounded tnum" id="st-acc">0%</div><div class="t-caption dim-2">DOĞRULUK</div></div>
+      <div class="center grow"><div class="t-title3 rounded tnum" id="st-streak">0</div><div class="t-caption dim-2">EN UZUN SERİ</div></div>
+      <div class="center grow"><div class="t-title3 rounded tnum" id="st-time">0 dk</div><div class="t-caption dim-2">SÜRE</div></div>
+    </div>
+  </div>
+
+  <div class="glass card">
+    <div class="t-headline" style="margin-bottom:6px">Konu başarısı</div>
+    <div id="stat-list"></div>
+  </div>
+
+  <div class="grow"></div>
+  <button class="btn t-subhead" id="btn-reset" style="min-height:44px">İstatistikleri sıfırla</button>
+  <div style="height:6px"></div>
+</section>
+
+</main>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>

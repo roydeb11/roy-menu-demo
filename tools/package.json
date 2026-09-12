@@ -1,0 +1,18 @@
+{
+  "name": "zihin-tools",
+  "private": true,
+  "description": "Zihin — doğrulama araçları (Swift sözdizimi, Xcode projesi, tarayıcı testleri, ikon üretimi)",
+  "scripts": {
+    "swift": "node swiftcheck.js ../ios/",
+    "e2e": "node e2e.js",
+    "fit": "node fitcheck.js",
+    "shots": "node shots.js",
+    "icons": "node makeicons.js"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0",
+    "tree-sitter": "^0.22.4",
+    "tree-sitter-swift": "^0.7.1",
+    "xcode": "^3.0.1"
+  }
+}
