@@ -8,6 +8,7 @@ const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 
 /** CSS animasyonunu baştan oynatır (reflow hilesi yerine Web Animations API). */
 function restartAnimation(el, className) {
+  if (!el) return;
   el.classList.remove(className);
   for (const a of el.getAnimations?.() ?? []) a.cancel();
   el.classList.add(className);
@@ -90,7 +91,8 @@ function renderHome() {
 /* ------------------------------------------------------------- oyun --- */
 function startGame(mode) {
   haptics.play('medium');
-  $('#level-fill').style.width = (state.level / 10) * 100 + '%';
+  const fill = $('#level-fill');
+  if (fill) fill.style.width = (state.level / 10) * 100 + '%';
   newSession(mode);
   $('#hud-time').classList.toggle('hidden', mode !== 'timed');
   show('screen-play');
@@ -135,11 +137,12 @@ function commitSession() {
 
 function updateHUD() {
   if (!sess) return;
+  const fill = $('#level-fill');
+  if (fill) fill.style.width = (sess.engine.level / 10) * 100 + '%';
   $('#hud-score').textContent = fmt(sess.score);
   $('#hud-streak').textContent = sess.streak;
   $('#hud-level').textContent = sess.engine.level;
   if (sess.mode === 'timed') $('#hud-time-v').textContent = Math.max(0, sess.timeLeft);
-  $('#level-fill').style.width = (sess.engine.level / 10) * 100 + '%';
 }
 
 /** Şık üzerinde görünecek metin. Yüzde sorularında başa % gelir. */
@@ -207,7 +210,7 @@ function nextQuestion() {
 }
 
 function answer(btn) {
-  if (!sess || sess.locked) return;
+  if (!sess?.q || sess.locked) return;
   sess.locked = true;
 
   const q = sess.q;
@@ -259,6 +262,7 @@ function answer(btn) {
 
 function feedback(msg) {
   const el = $('#feedback');
+  if (!el) return;
   el.textContent = msg;
   restartAnimation(el, 'show');
 }

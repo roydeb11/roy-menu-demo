@@ -4,8 +4,17 @@ const BLUE = 'var(--blue)';
 const INK = 'var(--ink)';
 const DIM = 'var(--ink-3)';
 
-const svg = (w, h, body) =>
-  `<svg viewBox="0 0 ${w} ${h}" role="img" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
+/** XML metin içeriğini kaçışlar. */
+const esc = (s) => String(s)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/**
+ * Ortak SVG sarmalayıcı. `role="img"` kullanan her çizim, ekran okuyucular
+ * için bir <title> ile adlandırılır.
+ */
+const svg = (w, h, body, title) =>
+  `<svg viewBox="0 0 ${w} ${h}" role="img" xmlns="http://www.w3.org/2000/svg">`
+  + `<title>${esc(title)}</title>${body}</svg>`;
 
 /** Gruplanmış noktalar — çarpma/sayma sezgisi */
 function dots({ groups, per }) {
@@ -28,7 +37,7 @@ function dots({ groups, per }) {
                </circle>`;
     }
   }
-  return svg(w, h, body);
+  return svg(w, h, body, `${groups} grup, her grupta ${per} nokta`);
 }
 
 /** Izgara — satır × sütun alan modeli */
@@ -42,7 +51,7 @@ function grid({ rows, cols }) {
                 fill="${BLUE}" opacity="0">
                  <animate attributeName="opacity" values="0;.88" dur="0.26s" begin="${(r * cols + c) * 0.014}s" fill="freeze"/>
                </rect>`;
-  return svg(w, h, body);
+  return svg(w, h, body, `${rows} satır ${cols} sütunluk ızgara`);
 }
 
 /** İki çubuk — fark sezgisi */
@@ -62,7 +71,7 @@ function bars({ a, b }) {
   let body = `<line x1="34" y1="${base}" x2="${w - 24}" y2="${base}" stroke="${DIM}" stroke-width="1"/>`;
   body += mk(x1, a, BLUE, `${a}`);
   body += mk(x2, b, 'rgba(255,255,255,.62)', `${b}`);
-  return svg(w, h, body);
+  return svg(w, h, body, `İki çubuk: ${a} birim ve ${b} birim`);
 }
 
 /** Pasta — yüzde sezgisi */
@@ -83,7 +92,7 @@ function pie({ percent }) {
     body += `<line x1="${cx}" y1="${cy}" x2="${(cx + Math.cos(ang) * R).toFixed(1)}" y2="${(cy + Math.sin(ang) * R).toFixed(1)}"
               stroke="rgba(255,255,255,.18)" stroke-width="1"/>`;
   }
-  return svg(w, h, body);
+  return svg(w, h, body, `Dairenin yüzde ${percent}'i dolu`);
 }
 
 /** Sayı doğrusu */
@@ -108,7 +117,7 @@ function numberline({ start, end, ticks, at }) {
             <circle cx="${ax.toFixed(1)}" cy="${y}" r="5.5" fill="${BLUE}"/>
             <text x="${ax.toFixed(1)}" y="${y - 40}" text-anchor="middle" fill="${BLUE}"
               font-size="17" font-weight="700" font-family="ui-rounded,-apple-system,system-ui">?</text></g>`;
-  return svg(w, h, body);
+  return svg(w, h, body, `${start} ile ${end} arası sayı doğrusu`);
 }
 
 /** Para — banknot/madeni para toplamı */
@@ -134,7 +143,7 @@ function coins({ items }) {
                font-family="ui-rounded,-apple-system,system-ui">${it.value}</text></g>`;
     }
   }
-  return svg(w, h, body);
+  return svg(w, h, body, 'Madeni para ve banknotlar');
 }
 
 const RENDERERS = { dots, grid, bars, pie, numberline, coins };

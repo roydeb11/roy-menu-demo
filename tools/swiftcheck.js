@@ -16,7 +16,22 @@ function walk(dir, out = []) {
   return out;
 }
 
-const roots = process.argv.slice(2);
+const REPO_ROOT = path.resolve(__dirname, '..');
+
+/**
+ * Komut satırından gelen yolu depo kökü içine hapseder.
+ * Dışarı çıkan bir yol (../../etc/passwd gibi) reddedilir.
+ */
+function safeRoot(input) {
+  const resolved = path.resolve(REPO_ROOT, input);
+  const rel = path.relative(REPO_ROOT, resolved);
+  if (rel.startsWith('..') || path.isAbsolute(rel)) {
+    throw new Error(`Depo kökü dışında yol reddedildi: ${input}`);
+  }
+  return resolved;
+}
+
+const roots = process.argv.slice(2).map(safeRoot);
 let files = [];
 for (const r of roots) files = files.concat(fs.statSync(r).isDirectory() ? walk(r) : [r]);
 

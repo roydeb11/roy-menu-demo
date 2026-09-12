@@ -34,7 +34,7 @@ struct EngineTests {
     // MARK: 2 — Aritmetik doğruluk
 
     @Test("Dört işlem ifadeleri yeniden hesaplandığında cevapla uyuşur")
-    func arithmeticIsCorrect() {
+    func arithmeticIsCorrect() throws {
         func parseTR(_ s: String) -> Double {
             Double(s.replacingOccurrences(of: ".", with: "")
                     .replacingOccurrences(of: ",", with: ".")) ?? .nan
@@ -45,7 +45,7 @@ struct EngineTests {
                                         categories: [.add, .sub, .mul, .div])
             for _ in 0..<2000 {
                 let q = engine.next()
-                let expression = try! #require(q.expression)
+                let expression = try #require(q.expression)
                 let parts = expression.split(separator: " ").map(String.init)
                 #expect(parts.count == 3)
                 let a = parseTR(parts[0]), b = parseTR(parts[2])
@@ -67,12 +67,12 @@ struct EngineTests {
     // MARK: 3 — Görsel tutarlılık
 
     @Test("Görsel soruların cevabı çizim verisinden türetilebilir")
-    func visualsMatchTheirAnswer() {
+    func visualsMatchTheirAnswer() throws {
         for level in 1...10 {
             let engine = QuestionEngine(seed: UInt32(4242 + level), level: level, categories: [.visual])
             for _ in 0..<2000 {
                 let q = engine.next()
-                let visual = try! #require(q.visual)
+                let visual = try #require(q.visual)
                 #expect(round2(visual.derivedAnswer) == q.answer)
                 if case .bars = visual { #expect(q.answer > 0) }       // eşit çubuk olmaz
             }

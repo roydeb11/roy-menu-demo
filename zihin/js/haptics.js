@@ -26,9 +26,28 @@ const PATTERNS = {
   levelUp:   [14, 45, 14, 45, 14, 45, 30],
 };
 
+/**
+ * Haptik tercihini okur. `localStorage` gizli modda ya da site verisi
+ * engelliyken istisna atabilir; o durumda varsayılan (açık) kullanılır.
+ */
+function readPreference() {
+  try {
+    return localStorage.getItem(KEY) !== '0';
+  } catch {
+    return true;
+  }
+}
+
+/** Tercihi yazar; depolama kullanılamıyorsa sessizce geçer. */
+function writePreference(enabled) {
+  try {
+    localStorage.setItem(KEY, enabled ? '1' : '0');
+  } catch { /* depolama yok — tercih yalnızca bu oturumda geçerli */ }
+}
+
 export class Haptics {
   constructor() {
-    this.enabled = localStorage.getItem(KEY) !== '0';
+    this.enabled = readPreference();
     this.canVibrate = typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function';
     this.sw = null;
     /* Tarayıcılar, kullanıcı sayfaya dokunmadan titreşim çağrısını engeller
@@ -48,7 +67,7 @@ export class Haptics {
 
   /** iOS Taptic Engine tetikleyicisi: görünmez switch. */
   _installSwitch() {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined' || !document.body) return;
     const el = document.createElement('input');
     el.type = 'checkbox';
     el.setAttribute('switch', '');
@@ -61,7 +80,7 @@ export class Haptics {
 
   setEnabled(on) {
     this.enabled = !!on;
-    localStorage.setItem(KEY, on ? '1' : '0');
+    writePreference(this.enabled);
     if (on) this.play('selection');
   }
 

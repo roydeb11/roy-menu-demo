@@ -5,9 +5,12 @@
 const fs = require('fs');
 const path = require('path');
 
-function firstExisting(paths) {
+/** Yalnızca var olan, normal (dizin değil) bir dosyayı kabul eder. */
+function firstRegularFile(paths) {
   for (const p of paths) {
-    try { if (p && fs.existsSync(p)) return p; } catch { /* yok say */ }
+    try {
+      if (p && fs.statSync(p).isFile()) return p;
+    } catch { /* yok / erişilemiyor — sıradakine geç */ }
   }
   return undefined;
 }
@@ -27,11 +30,13 @@ function playwrightDownloads() {
 }
 
 module.exports = function chromePath() {
-  return process.env.CHROME_PATH || firstExisting([
+  // CHROME_PATH verilmişse bile var olan bir dosyayı göstermek zorunda.
+  const candidates = process.env.CHROME_PATH ? [process.env.CHROME_PATH] : [
     ...playwrightDownloads(),
     '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     '/usr/bin/chromium',
     '/usr/bin/chromium-browser',
     '/usr/bin/google-chrome',
-  ]);
+  ];
+  return firstRegularFile(candidates);
 };

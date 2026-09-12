@@ -5,7 +5,21 @@ const { chromium, devices } = require('playwright');
 const fs = require('fs'), path = require('path');
 
 const SHOTS = path.join(__dirname, '..', 'docs', 'screenshots');
-const BASE = process.env.BASE || 'http://127.0.0.1:8099';
+const BASE = safeBase(process.env.BASE);
+
+/**
+ * Test sunucusu adresi. Ortam değişkeninden geldiği için doğrulanır:
+ * yalnızca http/https şeması ve yerel makine adresleri kabul edilir.
+ */
+function safeBase(value) {
+  if (!value) return 'http://127.0.0.1:8099';
+  const url = new URL(value);
+  const localHosts = ['127.0.0.1', 'localhost', '[::1]', '::1'];
+  if (!['http:', 'https:'].includes(url.protocol) || !localHosts.includes(url.hostname)) {
+    throw new Error(`BASE yalnızca yerel http(s) adresi olabilir, alınan: ${value}`);
+  }
+  return url.origin;
+}
 const EXEC = require('./chrome')();
 
 let pass = 0, fail = 0; const problems = [];
