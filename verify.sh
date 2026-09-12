@@ -23,17 +23,21 @@ node zihin/tests/engine.test.mjs || rc=1
 
 if [ "$have_tools" -eq 0 ]; then
   echo
-  echo "! tools/node_modules yok — Swift, Xcode ve tarayıcı doğrulamaları atlandı."
+  echo "! tools/node_modules yok — lint, Swift, Xcode ve tarayıcı doğrulamaları atlandı."
   echo "  Çalıştırmak için:  cd tools && npm install && npx playwright install chromium"
   exit $rc
 fi
 
 echo
-echo "=== 2) Swift sözdizimi (tree-sitter-swift, gerçek gramer) ==="
+echo "=== 2) Kod kalitesi: SonarJS + CSS + HTML kuralları ==="
+./tools/lint.sh || rc=1
+
+echo
+echo "=== 3) Swift sözdizimi (tree-sitter-swift, gerçek gramer) ==="
 node tools/swiftcheck.js ios/ || rc=1
 
 echo
-echo "=== 3) Xcode projesi (gerçek pbxproj ayrıştırıcısı) ==="
+echo "=== 4) Xcode projesi (gerçek pbxproj ayrıştırıcısı) ==="
 node -e "
 const xcode=require('./tools/node_modules/xcode');
 const p=xcode.project('ios/ZihinMath/ZihinMath.xcodeproj/project.pbxproj'); p.parseSync();
@@ -43,13 +47,13 @@ Object.keys(t).filter(k=>!k.endsWith('_comment')).forEach(k=>console.log('  · h
 " || rc=1
 
 echo
-echo "=== 4) Tarayıcıda uçtan uca (Chromium, iPhone görünümü) ==="
+echo "=== 5) Tarayıcıda uçtan uca (Chromium, iPhone görünümü) ==="
 (cd zihin && python3 -m http.server 8099 --bind 127.0.0.1 >/dev/null 2>&1 & echo $! > /tmp/zihin_verify.pid)
 sleep 1
 node tools/e2e.js || rc=1
 
 echo
-echo "=== 5) Yerleşim: üç iPhone boyutunda taşma yok ==="
+echo "=== 6) Yerleşim: üç iPhone boyutunda taşma yok ==="
 node tools/fitcheck.js || rc=1
 
 kill "$(cat /tmp/zihin_verify.pid)" 2>/dev/null

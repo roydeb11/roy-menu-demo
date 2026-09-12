@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="utf-8">
@@ -22,7 +22,7 @@
 <div class="streak-flare" id="flare" aria-hidden="true"></div>
 
 <!-- SF Symbols ruhunda ikon seti (yuvarlak uçlu, tek ağırlık) -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<svg class="icon-defs" aria-hidden="true">
   <defs>
     <g id="i-infinity"><path d="M4 12c0-2.2 1.8-4 4-4 3.4 0 4.6 8 8 8 2.2 0 4-1.8 4-4s-1.8-4-4-4c-3.4 0-4.6 8-8 8-2.2 0-4-1.8-4-4Z"
        fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>
@@ -45,7 +45,7 @@
   </header>
 
   <div class="stack">
-    <button class="mode-btn glass glass--blue glass--interactive" id="btn-endless">
+    <button type="button" class="mode-btn glass glass--blue glass--interactive" id="btn-endless">
       <span class="ico"><svg width="30" height="30" viewBox="0 0 24 24"><use href="#i-infinity"/></svg></span>
       <span class="meta grow">
         <span class="t-headline">Sonsuz Antrenman</span>
@@ -54,7 +54,7 @@
       <span class="t-footnote dim-2 tnum" id="best-endless">0</span>
     </button>
 
-    <button class="mode-btn glass glass--interactive" id="btn-timed">
+    <button type="button" class="mode-btn glass glass--interactive" id="btn-timed">
       <span class="ico"><svg width="28" height="28" viewBox="0 0 24 24"><use href="#i-timer"/></svg></span>
       <span class="meta grow">
         <span class="t-headline">60 Saniye</span>
@@ -63,7 +63,7 @@
       <span class="t-footnote dim-2 tnum" id="best-timed">0</span>
     </button>
 
-    <button class="mode-btn glass glass--interactive" id="btn-stats">
+    <button type="button" class="mode-btn glass glass--interactive" id="btn-stats">
       <span class="ico"><svg width="28" height="28" viewBox="0 0 24 24"><use href="#i-chart"/></svg></span>
       <span class="meta grow">
         <span class="t-headline">İstatistikler</span>
@@ -73,18 +73,18 @@
   </div>
 
   <div class="glass card">
-    <div class="row spread" style="margin-bottom:12px">
+    <div class="row spread mb-12">
       <span class="t-headline">Konular</span>
       <span class="t-footnote dim-2">dokunarak aç / kapat</span>
     </div>
     <div class="chips">
-      <button class="chip" data-cat="add"    aria-pressed="true">+ Toplama</button>
-      <button class="chip" data-cat="sub"    aria-pressed="true">− Çıkarma</button>
-      <button class="chip" data-cat="mul"    aria-pressed="true">× Çarpma</button>
-      <button class="chip" data-cat="div"    aria-pressed="true">÷ Bölme</button>
-      <button class="chip" data-cat="pct"    aria-pressed="true">% Yüzde</button>
-      <button class="chip" data-cat="daily"  aria-pressed="true">Günlük Hayat</button>
-      <button class="chip" data-cat="visual" aria-pressed="true">Görsel</button>
+      <button type="button" class="chip" data-cat="add"    aria-pressed="true">+ Toplama</button>
+      <button type="button" class="chip" data-cat="sub"    aria-pressed="true">− Çıkarma</button>
+      <button type="button" class="chip" data-cat="mul"    aria-pressed="true">× Çarpma</button>
+      <button type="button" class="chip" data-cat="div"    aria-pressed="true">÷ Bölme</button>
+      <button type="button" class="chip" data-cat="pct"    aria-pressed="true">% Yüzde</button>
+      <button type="button" class="chip" data-cat="daily"  aria-pressed="true">Günlük Hayat</button>
+      <button type="button" class="chip" data-cat="visual" aria-pressed="true">Görsel</button>
     </div>
   </div>
 
@@ -96,15 +96,15 @@
     </div>
   </div>
 
-  <button class="btn t-subhead" id="haptic-toggle" aria-pressed="true" style="min-height:44px">Haptik: Açık</button>
+  <button type="button" class="btn t-subhead btn--compact" id="haptic-toggle" aria-pressed="true">Haptik: Açık</button>
 
-  <p class="t-caption dim-2 center" style="padding:4px 0 8px">Ana ekrana ekleyerek tam ekran uygulama gibi kullanabilirsin.</p>
+  <p class="t-caption dim-2 center pb-8">Ana ekrana ekleyerek tam ekran uygulama gibi kullanabilirsin.</p>
 </section>
 
 <!-- ═══════════════════════════ OYUN ═══════════════════════════ -->
 <section class="screen" id="screen-play">
   <div class="hud">
-    <button class="hud-back glass glass--interactive" data-back aria-label="Geri">
+    <button type="button" class="hud-back glass glass--interactive" data-back aria-label="Geri">
       <svg width="22" height="22" viewBox="0 0 24 24"><use href="#i-back"/></svg>
     </button>
     <div class="hud-item glass"><span class="v rounded tnum" id="hud-score">0</span><span class="k">Puan</span></div>
@@ -113,7 +113,7 @@
     <div class="hud-item glass glass--blue hidden" id="hud-time"><span class="v rounded tnum" id="hud-time-v">60</span><span class="k">Süre</span></div>
   </div>
 
-  <div class="level-track"><div class="level-fill" id="level-fill" style="width:10%"></div></div>
+  <div class="level-track"><div class="level-fill" id="level-fill"></div></div>
 
   <div class="qcard glass" id="qcard">
     <span class="cat-badge" id="cat-badge">Toplama</span>
@@ -123,10 +123,10 @@
   </div>
 
   <div class="answers" id="answers">
-    <button class="ans glass--interactive"></button>
-    <button class="ans glass--interactive"></button>
-    <button class="ans glass--interactive"></button>
-    <button class="ans glass--interactive"></button>
+    <button type="button" class="ans glass--interactive" aria-label="1. şık"></button>
+    <button type="button" class="ans glass--interactive" aria-label="2. şık"></button>
+    <button type="button" class="ans glass--interactive" aria-label="3. şık"></button>
+    <button type="button" class="ans glass--interactive" aria-label="4. şık"></button>
   </div>
 
   <div class="feedback t-subhead" id="feedback" aria-live="polite"></div>
@@ -134,7 +134,7 @@
 
 <!-- ═════════════════════════ ÖZET (60 sn) ═════════════════════════ -->
 <section class="screen" id="screen-summary">
-  <div style="height:24px"></div>
+  <div class="spacer-24"></div>
   <div class="glass card center">
     <p class="t-subhead dim">Süre doldu</p>
     <div class="t-largeTitle rounded tnum accent" id="sum-score">0</div>
@@ -148,20 +148,20 @@
     </div>
   </div>
   <div class="grow"></div>
-  <button class="btn btn--primary" id="btn-again">
-    <span class="row" style="gap:8px"><svg width="19" height="19" viewBox="0 0 24 24"><use href="#i-again"/></svg> Bir tur daha</span>
+  <button type="button" class="btn btn--primary" id="btn-again">
+    <span class="row gap-8"><svg width="19" height="19" viewBox="0 0 24 24"><use href="#i-again"/></svg> Bir tur daha</span>
   </button>
-  <button class="btn" id="btn-summary-home">Ana ekran</button>
-  <div style="height:6px"></div>
+  <button type="button" class="btn" id="btn-summary-home">Ana ekran</button>
+  <div class="spacer-6"></div>
 </section>
 
 <!-- ═══════════════════════ İSTATİSTİKLER ═══════════════════════ -->
 <section class="screen" id="screen-stats">
-  <div class="row" style="padding:6px 0 2px">
-    <button class="hud-back glass glass--interactive" id="btn-stats-back" aria-label="Geri">
+  <div class="row screen-head">
+    <button type="button" class="hud-back glass glass--interactive" id="btn-stats-back" aria-label="Geri">
       <svg width="22" height="22" viewBox="0 0 24 24"><use href="#i-back"/></svg>
     </button>
-    <h2 class="t-title2 grow" style="margin:0 0 0 6px">İstatistikler</h2>
+    <h2 class="t-title2 grow">İstatistikler</h2>
   </div>
 
   <div class="glass card">
@@ -174,13 +174,13 @@
   </div>
 
   <div class="glass card">
-    <div class="t-headline" style="margin-bottom:6px">Konu başarısı</div>
+    <div class="t-headline mb-6">Konu başarısı</div>
     <div id="stat-list"></div>
   </div>
 
   <div class="grow"></div>
-  <button class="btn t-subhead" id="btn-reset" style="min-height:44px">İstatistikleri sıfırla</button>
-  <div style="height:6px"></div>
+  <button type="button" class="btn t-subhead btn--compact" id="btn-reset">İstatistikleri sıfırla</button>
+  <div class="spacer-6"></div>
 </section>
 
 </main>

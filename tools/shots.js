@@ -2,11 +2,22 @@
 const { chromium, devices } = require('playwright');
 const fs = require('fs'), path = require('path');
 const SHOTS = path.join(__dirname, '..', 'docs', 'screenshots');
-const EXEC = process.env.CHROME_PATH || undefined;  // boşsa Playwright'in kendi Chromium'u
+const EXEC = require('./chrome')();
 const BASE = 'http://127.0.0.1:8099';
 
 let pass = 0, fail = 0;
-const ok = (c, m, x) => { c ? (pass++, console.log('  ✓ ' + m)) : (fail++, console.log('  ✗ ' + m + (x ? ' :: ' + x : ''))); };
+function ok(cond, msg, extra) {
+  if (cond) { pass++; console.log('  ✓ ' + msg); return; }
+  fail++;
+  console.log('  ✗ ' + msg + (extra ? ' :: ' + extra : ''));
+}
+
+/** Soru kartı gerçekten dolu mu? */
+function cardIsFilled(info) {
+  if (info.hasExpr && info.exprText.length > 0) return true;
+  if (info.hasText && info.bodyText.length > 0) return true;
+  return info.hasVisual && info.svgCount > 0;
+}
 
 (async () => {
   const browser = await chromium.launch({ executablePath: EXEC, args: ['--no-sandbox'] });
@@ -50,10 +61,7 @@ const ok = (c, m, x) => { c ? (pass++, console.log('  ✓ ' + m)) : (fail++, con
 
     ok(info.cat === cat, `${cat}: doğru kategori çizildi`);
     ok(info.opacity === '1', `${cat}: kart tam görünür (opacity ${info.opacity})`);
-    const filled = (info.hasExpr && info.exprText.length > 0)
-                || (info.hasText && info.bodyText.length > 0)
-                || (info.hasVisual && info.svgCount > 0);
-    ok(filled, `${cat}: soru kartı dolu`, JSON.stringify(info));
+    ok(cardIsFilled(info), `${cat}: soru kartı dolu`, JSON.stringify(info));
     ok(info.optionCount === 4 && info.optionLabels.every((l) => l.length > 0), `${cat}: 4 şık yazıldı — ${info.optionLabels.join(' / ')}`);
 
     await page.screenshot({ path: path.join(SHOTS, name + '.png') });

@@ -10,6 +10,7 @@ npx playwright install chromium
 
 | Komut | Ne yapar |
 |---|---|
+| `npm run lint` | SonarCloud'un uyguladığı kural ailelerini yerelde çalıştırır: JavaScript için **SonarSource'un kendi kural motoru** (`eslint-plugin-sonarjs`), CSS için Sonar'ın hata ailesine karşılık gelen stylelint kuralları, HTML için `html-validate`. |
 | `npm run swift` | Bütün Swift dosyalarını gerçek Swift gramerine (tree-sitter-swift) göre ayrıştırır; tek `ERROR`/`MISSING` düğümü varsa bildirir. |
 | `npm run e2e` | Chromium'u iPhone görünümünde açar, 250 soru oynar, üç-ton palet denetimi yapar, ekran görüntüsü alır. |
 | `npm run fit` | Üç iPhone boyutunda her soru tipinde taşma olup olmadığını ölçer. |

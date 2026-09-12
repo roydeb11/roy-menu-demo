@@ -6,7 +6,7 @@ const fs = require('fs'), path = require('path');
 
 const SHOTS = path.join(__dirname, '..', 'docs', 'screenshots');
 const BASE = process.env.BASE || 'http://127.0.0.1:8099';
-const EXEC = process.env.CHROME_PATH || undefined;  // boşsa Playwright'in kendi Chromium'u
+const EXEC = require('./chrome')();
 
 let pass = 0, fail = 0; const problems = [];
 const ok = (c, m, extra) => { if (c) { pass++; console.log('  ✓ ' + m); } else { fail++; problems.push(m + (extra ? ' :: ' + extra : '')); console.log('  ✗ ' + m + (extra ? ' :: ' + extra : '')); } };
@@ -71,7 +71,8 @@ function classify(css) {
 
   // hep doğru cevapla — seviye yükselmeli, puan artmalı, akış hiç durmamalı
   const seen = new Set();
-  let lastScore = 0, maxLevel = 1, kinds = new Set();
+  let maxLevel = 1;
+  const kinds = new Set();
   for (let i = 0; i < 250; i++) {
     const info = await page.evaluate(() => {
       const q = window.__zihin.sess.q;
@@ -86,7 +87,6 @@ function classify(css) {
     await page.waitForTimeout(35);
     // bir sonraki soruyu bekle
     await page.waitForFunction((prev) => window.__zihin.sess?.q?.sig !== prev, info.sig, { timeout: 4000 });
-    lastScore = info.score;
   }
   ok(seen.size >= 240, `250 soruda ${seen.size} benzersiz soru geldi (tekrar neredeyse yok)`);
   ok(kinds.size === 7, `7 kategorinin hepsi oyun içinde göründü (${[...kinds].join(',')})`);

@@ -6,6 +6,26 @@ import { Haptics } from './haptics.js';
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 
+/** CSS animasyonunu baştan oynatır (reflow hilesi yerine Web Animations API). */
+function restartAnimation(el, className) {
+  el.classList.remove(className);
+  for (const a of el.getAnimations?.() ?? []) a.cancel();
+  el.classList.add(className);
+}
+
+/** Verilen etiketle bir eleman üretir. */
+function make(tag, className, text) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  if (text !== undefined) el.textContent = text;
+  return el;
+}
+
+/** Bir elemanın içeriğini temizler. */
+function clear(el) {
+  while (el.firstChild) el.removeChild(el.firstChild);
+}
+
 const STORE_KEY = 'zihin.state.v1';
 const haptics = new Haptics();
 
@@ -70,6 +90,7 @@ function renderHome() {
 /* ------------------------------------------------------------- oyun --- */
 function startGame(mode) {
   haptics.play('medium');
+  $('#level-fill').style.width = (state.level / 10) * 100 + '%';
   newSession(mode);
   $('#hud-time').classList.toggle('hidden', mode !== 'timed');
   show('screen-play');
@@ -121,6 +142,23 @@ function updateHUD() {
   $('#level-fill').style.width = (sess.engine.level / 10) * 100 + '%';
 }
 
+/** Şık üzerinde görünecek metin. Yüzde sorularında başa % gelir. */
+function optionLabel(value, unit) {
+  return unit === '%' ? '%' + fmt(value) : fmt(value);
+}
+
+/**
+ * SVG kaynağını güvenli biçimde düğüme çevirir.
+ * innerHTML yerine DOMParser kullanılır: içerik HTML ayrıştırıcısına hiç
+ * girmez ve betik çalıştırılmaz.
+ */
+function svgNode(markup) {
+  if (!markup) return null;
+  const doc = new DOMParser().parseFromString(markup, 'image/svg+xml');
+  if (doc.querySelector('parsererror')) return null;
+  return document.importNode(doc.documentElement, true);
+}
+
 /** Sonsuz akış: her çağrı yeni ve farklı bir soru getirir. */
 function nextQuestion() {
   const q = sess.engine.next();
@@ -128,10 +166,7 @@ function nextQuestion() {
   sess.askedAt = performance.now();
   sess.locked = false;
 
-  const card = $('#qcard');
-  card.classList.remove('q-enter');
-  void card.offsetWidth;                     // reflow → animasyon yeniden başlar
-  card.classList.add('q-enter');
+  restartAnimation($('#qcard'), 'q-enter');
 
   $('#cat-badge').textContent = CATEGORY_META[q.cat].tr;
 
@@ -147,15 +182,23 @@ function nextQuestion() {
   }
 
   visEl.classList.toggle('hidden', !q.visual);
-  visEl.innerHTML = q.visual ? renderVisual(q.visual) : '';
+  clear(visEl);
+  if (q.visual) {
+    const node = svgNode(renderVisual(q.visual));
+    if (node) visEl.appendChild(node);
+  }
 
-  const unit = q.unit && q.unit !== '%' ? `<span class="unit">${q.unit}</span>` : '';
   $$('#answers .ans').forEach((btn, i) => {
-    const v = q.options[i];
+    const value = q.options[i];
     btn.className = 'ans glass--interactive';
     btn.disabled = false;
-    btn.dataset.value = String(v);
-    btn.innerHTML = `<span>${q.unit === '%' ? '%' + fmt(v) : fmt(v) + ''}${unit}</span>`;
+    btn.dataset.value = String(value);
+    clear(btn);
+    const wrap = make('span');
+    wrap.appendChild(make('span', null, optionLabel(value, q.unit)));
+    if (q.unit && q.unit !== '%') wrap.appendChild(make('span', 'unit', q.unit));
+    btn.appendChild(wrap);
+    btn.setAttribute('aria-label', `${optionLabel(value, q.unit)}${q.unit && q.unit !== '%' ? ' ' + q.unit : ''}`);
     btn.style.animationDelay = (i * 0.045) + 's';
   });
 
@@ -191,7 +234,8 @@ function answer(btn) {
     haptics.play(sess.streak > 0 && sess.streak % 5 === 0 ? 'streak' : 'success');
     if (sess.streak > 0 && sess.streak % 5 === 0) flare();
 
-    feedback(`+${pts} puan${sess.streak >= 3 ? ` · ${sess.streak} seri 🔥` : ''}`);
+    const streakNote = sess.streak >= 3 ? ` · ${sess.streak} seri 🔥` : '';
+    feedback(`+${pts} puan${streakNote}`);
   } else {
     sess.streak = 0;
     btn.classList.add('is-wrong');
@@ -216,12 +260,11 @@ function answer(btn) {
 function feedback(msg) {
   const el = $('#feedback');
   el.textContent = msg;
-  el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  restartAnimation(el, 'show');
 }
 
 function flare() {
-  const el = $('#flare');
-  el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+  restartAnimation($('#flare'), 'go');
 }
 
 function quit() {
@@ -241,15 +284,24 @@ function renderStats() {
   $('#st-streak').textContent = fmt(t.bestStreak);
   $('#st-time').textContent = Math.round(t.seconds / 60) + ' dk';
 
-  $('#stat-list').innerHTML = CATEGORIES.map((c) => {
-    const s = state.perCat[c];
-    const pct = s.asked ? Math.round((s.correct / s.asked) * 100) : 0;
-    return `<div class="stat-row">
-        <span class="name dim">${CATEGORY_META[c].tr}</span>
-        <span class="bar"><i style="width:${pct}%"></i></span>
-        <span class="val">${s.asked ? pct + '%' : '—'}</span>
-      </div>`;
-  }).join('');
+  const list = $('#stat-list');
+  clear(list);
+  for (const c of CATEGORIES) {
+    const stat = state.perCat[c];
+    const pct = stat.asked ? Math.round((stat.correct / stat.asked) * 100) : 0;
+
+    const row = make('div', 'stat-row');
+    row.appendChild(make('span', 'name dim', CATEGORY_META[c].tr));
+
+    const bar = make('span', 'bar');
+    const fill = make('i');
+    fill.style.width = pct + '%';
+    bar.appendChild(fill);
+    row.appendChild(bar);
+
+    row.appendChild(make('span', 'val', stat.asked ? pct + '%' : '—'));
+    list.appendChild(row);
+  }
 }
 
 /* --------------------------------------------------------------- olay --- */

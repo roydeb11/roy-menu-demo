@@ -7,13 +7,13 @@ Bu belgedeki her satır çalıştırılmış bir komutun çıktısıdır. Hepsin
 ./tools-verify.sh
 ```
 
-Son çalıştırma: **hepsi geçti** — 69 iddia, 0 başarısız.
+Son çalıştırma: **hepsi geçti** — 6 adım, 0 başarısız.
 
 ---
 
-## 1) Soru motoru — 30 iddia, ~1,4 milyon üretilmiş soru
+## 1) Soru motoru — 12 test, ~1,4 milyon üretilmiş soru
 
-`node zihin/tests/engine.test.mjs`
+`node zihin/tests/engine.test.mjs` (Node'un yerleşik `node:test` koşucusu, bağımlılık yok)
 
 | # | Ne ölçüldü | Kapsam | Sonuç |
 |---|---|---|---|
@@ -30,7 +30,37 @@ Son çalıştırma: **hepsi geçti** — 69 iddia, 0 başarısız.
 
 Toplam üretilen ve doğrulanan soru: **1.434.000**.
 
-## 2) Swift kaynakları — gerçek gramerle ayrıştırıldı
+## 2) Kod kalitesi — SonarCloud'un uyguladığı kurallar yerelde
+
+`./tools/lint.sh`
+
+| Katman | Araç | Sonuç |
+|---|---|---|
+| JavaScript | **`eslint-plugin-sonarjs`** — SonarSource'un kendi kural motoru; hem "recommended" profil hem de bütün hata/güvenlik sınıfı kurallar (S2589 gereksiz koşul, S1764 aynı işlenen, S4143 üzerine yazma, S2245 PRNG, S5332 açık metin protokol, S1854 ölü atama, S2310 döngü sayacı, …) | temiz |
+| CSS | `stylelint`, Sonar'ın CSS hata ailesine karşılık gelen kurallar (bilinmeyen özellik/birim/at-rule, yinelenen bildirim, geçersiz hex, kısayol çakışması, …) | temiz |
+| HTML | `html-validate` (doctype, düğme tipi, erişilebilir ad, satır içi stil, …) | temiz |
+
+> Bu adım, PR'da kırmızı yanan **SonarCloud Quality Gate**'i (Reliability D,
+> Security C) çözmek için eklendi. `sonarcloud.io` bu ortamda çıkış
+> politikasıyla engelli olduğu (HTTP 403) ve check satır içi açıklama
+> üretmediği için bulgular, SonarSource'un kural motoru yerelde çalıştırılarak
+> bulundu. Düzeltilenler:
+>
+> * **`innerHTML` tamamen kaldırıldı.** İstatistik listesi `localStorage`'tan
+>   okunan veriyi `innerHTML`'e yazıyordu — Sonar'ın taint analizinde bu
+>   DOM-tabanlı XSS açığıdır (Security). Yerine `document.createElement`
+>   tabanlı güvenli kurulum; SVG için `DOMParser` + `importNode` geldi.
+> * `Math.random()` yedeği kaldırıldı (S2245 PRNG); tohum artık yalnızca
+>   `crypto.getRandomValues`, o yoksa saat + sayaç karışımı.
+> * `void el.offsetWidth` reflow hilesi yerine Web Animations API ile
+>   animasyon yeniden başlatma.
+> * İç içe üçlü operatörler, iç içe şablon dizeleri, iç içe atamalar
+>   çıkarıldı; `genVisual` ve `fitcheck` bilişsel karmaşıklık sınırının
+>   altına indirildi; ölü atama ve döngü sayacı mutasyonu giderildi.
+> * HTML: `<!DOCTYPE>` büyük harf, her düğmeye `type="button"`, cevap
+>   düğmelerine erişilebilir ad, bütün satır içi stiller CSS sınıflarına.
+
+## 3) Swift kaynakları — gerçek gramerle ayrıştırıldı
 
 `node swiftcheck.js ios/` (tree-sitter-swift 0.7.1)
 
@@ -49,7 +79,7 @@ Her dosya gerçek bir Swift gramerine göre ayrıştırıldı; tek bir `ERROR` v
 > iddialar `ios/ZihinMath/ZihinMathTests/EngineTests.swift` içinde Swift Testing
 > ile yazıldı — Xcode'da `⌘U` ile çalışır.
 
-## 3) Xcode projesi — gerçek pbxproj ayrıştırıcısıyla okundu
+## 4) Xcode projesi — gerçek pbxproj ayrıştırıcısıyla okundu
 
 `xcode` npm paketi (Cordova/Expo'nun kullandığı ayrıştırıcı):
 
@@ -63,7 +93,7 @@ Kaynak dosyalar `PBXFileSystemSynchronizedRootGroup` ile klasör senkronizasyonu
 üzerinden bağlı — yeni dosya eklendiğinde proje dosyasını elle düzenlemek gerekmez.
 Paylaşılan şema (`ZihinMath.xcscheme`) de depoda.
 
-## 4) Tarayıcıda uçtan uca — 36 iddia
+## 5) Tarayıcıda uçtan uca — 36 iddia
 
 `node e2e.js` · Chromium, iPhone 15 Pro görünümü, `tr-TR`, koyu ve açık görünüm.
 
@@ -86,7 +116,7 @@ değerleri toplandı ve sınıflandırıldı. Her değer ya akromatik (siyah↔b
 ya saydam, ya da Apple systemBlue (`#0A84FF` / `#007AFF`) çıktı. **Dördüncü bir renk
 tonu yok.**
 
-## 5) Yerleşim — üç iPhone boyutu
+## 6) Yerleşim — üç iPhone boyutu
 
 `node fitcheck.js` · iPhone SE, iPhone 15 Pro, iPhone 15 Pro Max.
 
@@ -97,7 +127,18 @@ geri bildirim satırı ekranın içinde kaldı, sayfa hiç kaymadı.
 > satırı ekranın altına taşıyordu. Oyun ekranı `100svh`e sabitlenip soru kartı
 > esnetilerek düzeltildi, sonra üç cihazda yeniden ölçüldü.
 
-## 6) Ekran görüntüleri
+### Doğrulamanın yakaladığı diğer gerçek hatalar
+
+1. Kullanıcı ekrana dokunmadan `navigator.vibrate` çağrılıyor ve tarayıcı
+   konsola hata yazıyordu → haptik ilk etkileşime kadar sessiz.
+2. SonarCloud düzeltmeleri sırasında bir yardımcı fonksiyon bloğu yanlış
+   çapaya takıldığı için dosyaya hiç eklenmemişti; uygulama açılışta
+   `optionLabel is not defined` ile patlıyordu. Uçtan uca test bunu ilk
+   çalıştırmada yakaladı (36 iddiadan 7'si kırmızı), fonksiyonlar eklendi ve
+   tekrar 36/36 geçti. **Düzeltmeler ancak testten geçtikten sonra
+   itildi.**
+
+## 7) Ekran görüntüleri
 
 `docs/screenshots/` — hepsi gerçek tarayıcıda, iPhone görünümünde alındı:
 
@@ -115,7 +156,7 @@ geri bildirim satırı ekranın içinde kaldı, sayfa hiç kaymadı.
 | `10…16` | Yedi kategorinin her biri |
 | `17-gorsel-*` | Altı görsel soru tipi (nokta, ızgara, çubuk, pasta, sayı doğrusu, para) |
 
-## 7) Apple dokümantasyonu — okunan kaynaklar
+## 8) Apple dokümantasyonu — okunan kaynaklar
 
 Liquid Glass API imzaları ve HIG tabloları `developer.apple.com`'un kendi JSON
 doküman uç noktalarından çekilip birebir alındı (sayfalar JavaScript ile

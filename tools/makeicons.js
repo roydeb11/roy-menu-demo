@@ -21,7 +21,7 @@ const html = (o) => `<!doctype html><meta charset="utf-8"><style>
 </style><div class="wrap"><div class="glow"></div><div class="lens"></div><div class="z">Z</div></div>`;
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined, args: ['--no-sandbox','--font-render-hinting=none'] });
+  const browser = await chromium.launch({ executablePath: require('./chrome')(), args: ['--no-sandbox','--font-render-hinting=none'] });
   const page = await browser.newPage({ viewport: { width: 1024, height: 1024 }, deviceScaleFactor: 1 });
 
   const variants = [

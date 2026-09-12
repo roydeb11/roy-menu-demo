@@ -22,8 +22,14 @@ export function randomSeed() {
     globalThis.crypto.getRandomValues(b);
     return b[0];
   }
-  return (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0;
+  // Kripto yoksa: yüksek çözünürlüklü saat + çağrı sayacı. Güvenlik amaçlı
+  // değil, yalnızca oturumdan oturuma farklı soru dizisi üretmek için.
+  seedCounter += 1;
+  const now = typeof performance !== 'undefined' ? performance.now() : 0;
+  return ((Date.now() ^ Math.trunc(now * 1000) ^ (seedCounter * 0x9e3779b1)) >>> 0);
 }
+
+let seedCounter = 0;
 
 /* ------------------------------------------------------------ helpers --- */
 const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
@@ -211,15 +217,18 @@ function genDiv(r, L) {
 function genPct(r, L) {
   const easyP = [10, 20, 25, 50, 5, 75];
   const hardP = [12, 15, 18, 30, 35, 40, 45, 60, 65, 80, 90, 3, 8];
-  const mode = L <= 3 ? r.pick(['of', 'of', 'of'])
-             : L <= 6 ? r.pick(['of', 'of', 'whatPct', 'discount'])
-             :          r.pick(['of', 'whatPct', 'discount', 'increase', 'reverse']);
+  let modes;
+  if (L <= 3) modes = ['of'];
+  else if (L <= 6) modes = ['of', 'of', 'whatPct', 'discount'];
+  else modes = ['of', 'whatPct', 'discount', 'increase', 'reverse'];
+  const mode = r.pick(modes);
 
   if (mode === 'of') {
     const p = L <= 4 ? r.pick(easyP) : r.pick([...easyP, ...hardP]);
-    const base = L <= 3 ? r.money(40, 400, 20)
-               : L <= 6 ? r.money(80, 1200, 20)
-               :          r.money(200, 9000, 50);
+    let base;
+    if (L <= 3) base = r.money(40, 400, 20);
+    else if (L <= 6) base = r.money(80, 1200, 20);
+    else base = r.money(200, 9000, 50);
     const answer = round2((base * p) / 100);
     const errors = [base * p / 1000, base * p / 10, base - answer, answer * 2, answer / 2, answer + base * 0.01];
     return {
@@ -577,72 +586,109 @@ function genDaily(r, L) {
 }
 
 /* ------------------------------------------------------ görsel sorular --- */
-function genVisual(r, L) {
-  const kinds = L <= 2 ? ['dots', 'grid', 'bars']
-              : L <= 5 ? ['dots', 'grid', 'bars', 'pie', 'numberline']
-              :          ['grid', 'bars', 'pie', 'numberline', 'coins'];
-  const kind = r.pick(kinds);
+/** Seviyeye göre hangi görsel tipleri açık. */
+function visualKindsFor(L) {
+  if (L <= 2) return ['dots', 'grid', 'bars'];
+  if (L <= 5) return ['dots', 'grid', 'bars', 'pie', 'numberline'];
+  return ['grid', 'bars', 'pie', 'numberline', 'coins'];
+}
 
-  if (kind === 'dots') {
-    const g = r.int(2, L <= 3 ? 4 : 6), per = r.int(2, L <= 3 ? 5 : 9);
+const VISUAL_BUILDERS = {
+
+  dots(r, L) {
+    const g = r.int(2, L <= 3 ? 4 : 6);
+    const per = r.int(2, L <= 3 ? 5 : 9);
     const answer = g * per;
-    return { cat: 'visual', text: 'Toplam kaç nokta var?',
+    return {
+      cat: 'visual', text: 'Toplam kaç nokta var?',
       visual: { type: 'dots', groups: g, per },
-      answer, options: buildOptions(r, answer, [g + per, answer + per, answer - per, answer + g, g * (per + 1)]),
-      hint: `${g} grup × ${per} nokta = ${answer}`, sig: `v:dots:${g}:${per}` };
-  }
-  if (kind === 'grid') {
-    const rows = r.int(2, L <= 4 ? 6 : 9), cols = r.int(2, L <= 4 ? 6 : 9);
+      answer,
+      options: buildOptions(r, answer, [g + per, answer + per, answer - per, answer + g, g * (per + 1)]),
+      hint: `${g} grup × ${per} nokta = ${answer}`, sig: `v:dots:${g}:${per}`,
+    };
+  },
+
+  grid(r, L) {
+    const rows = r.int(2, L <= 4 ? 6 : 9);
+    const cols = r.int(2, L <= 4 ? 6 : 9);
     const answer = rows * cols;
-    return { cat: 'visual', text: 'Izgaradaki kare sayısı kaçtır?',
+    return {
+      cat: 'visual', text: 'Izgaradaki kare sayısı kaçtır?',
       visual: { type: 'grid', rows, cols },
-      answer, options: buildOptions(r, answer, [rows + cols, 2 * (rows + cols), answer + rows, answer - cols, (rows + 1) * cols]),
-      hint: `${rows} satır × ${cols} sütun = ${answer}`, sig: `v:grid:${rows}:${cols}` };
-  }
-  if (kind === 'bars') {
-    const a = r.int(3, 20), b = r.int(3, 20);
-    if (a === b) return genVisual(r, L);
-    const hi = Math.max(a, b), lo = Math.min(a, b);
-    const answer = hi - lo;
-    return { cat: 'visual', text: 'Uzun çubuk kısa çubuktan kaç birim fazla?',
+      answer,
+      options: buildOptions(r, answer, [rows + cols, 2 * (rows + cols), answer + rows, answer - cols, (rows + 1) * cols]),
+      hint: `${rows} satır × ${cols} sütun = ${answer}`, sig: `v:grid:${rows}:${cols}`,
+    };
+  },
+
+  bars(r) {
+    let a = r.int(3, 20);
+    let b = r.int(3, 20);
+    if (a === b) b = a < 20 ? a + 1 : a - 1;      // eşit çubuk olmaz
+    if (a < b) [a, b] = [b, a];
+    const answer = a - b;
+    return {
+      cat: 'visual', text: 'Uzun çubuk kısa çubuktan kaç birim fazla?',
       visual: { type: 'bars', a, b },
-      answer, options: buildOptions(r, answer, [hi + lo, hi, lo, answer + 1, answer - 1, answer * 2]),
-      hint: `${hi} − ${lo} = ${answer}`, sig: `v:bars:${a}:${b}` };
-  }
-  if (kind === 'pie') {
+      answer,
+      options: buildOptions(r, answer, [a + b, a, b, answer + 1, answer - 1, answer * 2]),
+      hint: `${a} − ${b} = ${answer}`, sig: `v:bars:${a}:${b}`,
+    };
+  },
+
+  pie(r) {
     const p = r.pick([10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90]);
-    return { cat: 'visual', text: 'Dairenin yüzde kaçı dolu?', unit: '%',
+    return {
+      cat: 'visual', text: 'Dairenin yüzde kaçı dolu?', unit: '%',
       visual: { type: 'pie', percent: p },
-      answer: p, options: buildOptions(r, p, [100 - p, p + 10, p - 10, Math.round(p / 2), p * 2]),
-      hint: `Dolu dilim tüm dairenin %${p}'i kadar.`, sig: `v:pie:${p}` };
-  }
-  if (kind === 'numberline') {
+      answer: p,
+      options: buildOptions(r, p, [100 - p, p + 10, p - 10, Math.round(p / 2), p * 2]),
+      hint: `Dolu dilim tüm dairenin %${p}'i kadar.`, sig: `v:pie:${p}`,
+    };
+  },
+
+  numberline(r) {
     const step = r.pick([1, 2, 5, 10, 25, 50]);
     const start = step * r.int(0, 8);
     const ticks = 10;
     const end = start + step * ticks;
     const at = r.int(1, ticks - 1);
     const answer = start + step * at;
-    return { cat: 'visual', text: 'Ok hangi sayıyı gösteriyor?',
+    return {
+      cat: 'visual', text: 'Ok hangi sayıyı gösteriyor?',
       visual: { type: 'numberline', start, end, ticks, at },
-      answer, options: buildOptions(r, answer, [answer + step, answer - step, start, end, answer + step * 2]),
-      hint: `Aralık ${step}; başlangıç ${start}. ${at} adım sonra ${answer}.`, sig: `v:nl:${start}:${step}:${at}` };
-  }
-  // coins — Türk Lirası banknot/madeni para toplamı
-  const denoms = [1, 5, 10, 20, 50, 100, 200];
-  const picks = [];
-  let answer = 0;
-  const kinds2 = r.int(2, 4);
-  for (let i = 0; i < kinds2; i++) {
-    const d = r.pick(denoms), c = r.int(1, 4);
-    picks.push({ value: d, count: c });
-    answer += d * c;
-  }
-  return { cat: 'visual', text: 'Görseldeki paraların toplamı kaç TL?', unit: 'TL',
-    visual: { type: 'coins', items: picks },
-    answer, options: buildOptions(r, answer, [answer + 10, answer - 10, answer + 50, answer - 50, answer * 2, Math.round(answer / 2)]),
-    hint: picks.map((p) => `${p.count}×${p.value}`).join(' + ') + ` = ${answer} TL`,
-    sig: `v:coins:${picks.map((p) => p.value + 'x' + p.count).join('_')}` };
+      answer,
+      options: buildOptions(r, answer, [answer + step, answer - step, start, end, answer + step * 2]),
+      hint: `Aralık ${step}; başlangıç ${start}. ${at} adım sonra ${answer}.`,
+      sig: `v:nl:${start}:${step}:${at}`,
+    };
+  },
+
+  coins(r) {
+    const denominations = [1, 5, 10, 20, 50, 100, 200];
+    const stacks = [];
+    let answer = 0;
+    const stackCount = r.int(2, 4);
+    for (let i = 0; i < stackCount; i++) {
+      const value = r.pick(denominations);
+      const count = r.int(1, 4);
+      stacks.push({ value, count });
+      answer += value * count;
+    }
+    const label = stacks.map((x) => `${x.count}×${x.value}`).join(' + ');
+    return {
+      cat: 'visual', text: 'Görseldeki paraların toplamı kaç TL?', unit: 'TL',
+      visual: { type: 'coins', items: stacks },
+      answer,
+      options: buildOptions(r, answer, [answer + 10, answer - 10, answer + 50, answer - 50, answer * 2, Math.round(answer / 2)]),
+      hint: `${label} = ${answer} TL`,
+      sig: `v:coins:${stacks.map((x) => x.value + 'x' + x.count).join('_')}`,
+    };
+  },
+};
+
+function genVisual(r, L) {
+  return VISUAL_BUILDERS[r.pick(visualKindsFor(L))](r, L);
 }
 
 const GENERATORS = { add: genAdd, sub: genSub, mul: genMul, div: genDiv, pct: genPct, daily: genDaily, visual: genVisual };

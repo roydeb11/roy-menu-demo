@@ -153,6 +153,13 @@ Motor testleri (Node 18+, bağımlılık yok):
 node zihin/tests/engine.test.mjs
 ```
 
+Kod kalitesi (SonarJS + CSS + HTML kuralları):
+
+```bash
+cd tools && npm install && cd ..
+./tools/lint.sh
+```
+
 ---
 
 ## Doğrulama
