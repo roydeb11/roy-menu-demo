@@ -36,7 +36,8 @@ let files = [];
 for (const r of roots) files = files.concat(fs.statSync(r).isDirectory() ? walk(r) : [r]);
 
 let bad = 0, totalNodes = 0, totalLines = 0;
-for (const f of files.sort((a, b) => a.localeCompare(b))) {
+const sorted = files.toSorted((a, b) => a.localeCompare(b));
+for (const f of sorted) {
   const src = fs.readFileSync(f, 'utf8');
   totalLines += src.split('\n').length;
   const tree = parser.parse(src);

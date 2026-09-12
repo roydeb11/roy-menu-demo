@@ -68,10 +68,11 @@ final class HapticEngine {
             e.resetHandler = { [weak self] in
                 try? self?.engine?.start()
             }
-            // Motor sistem tarafından durdurulduğunda (arka plana geçiş, ses
-            // oturumu kesintisi) yapılacak bir şey yok: bir sonraki haptik
-            // isteğinde resetHandler zaten yeniden başlatıyor.
-            e.stoppedHandler = { _ in }
+            e.stoppedHandler = { _ in
+                // Motor sistem tarafından durdurulduğunda (arka plana geçiş,
+                // ses oturumu kesintisi) yapılacak bir şey yok: bir sonraki
+                // haptik isteğinde resetHandler zaten yeniden başlatıyor.
+            }
             try e.start()
             engine = e
         } catch {

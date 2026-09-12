@@ -21,5 +21,8 @@
     "tree-sitter": "^0.22.4",
     "tree-sitter-swift": "^0.7.1",
     "xcode": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

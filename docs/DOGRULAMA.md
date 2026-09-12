@@ -78,6 +78,14 @@ Toplam üretilen ve doğrulanan soru: **1.434.000**.
 >   nesne, isteğe bağlı zincir, `last2` için `Set`.
 > * `tools/package-lock.json` eklendi — araç sürümleri artık öngörülebilir.
 >
+> **Son tur: kapı geçti, kalan 6 bulgu da temizlendi**
+>
+> `48d0057` üzerinde **Quality Gate passed** (0 güvenlik açığı, 0 güvenlik
+> hotspot'u, 0 kopya kod). Kalan 6 bulgu engelleyici olmadığı hâlde düzeltildi:
+> Swift'te üç boş closure'ın açıklaması closure'ın **içine** alındı (Sonar
+> "iç içe açıklama" istiyor), `files.sort()` → `toSorted()` (diziyi yerinde
+> değiştirmiyor), `NaN` → `Number.NaN`, `removeChild` → `remove()`.
+>
 > **Önceki turlarda düzeltilenler (bulgular okunmadan, önlem olarak)**
 >
 > * **`innerHTML` tamamen kaldırıldı.** İstatistik listesi `localStorage`'tan

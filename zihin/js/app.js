@@ -24,7 +24,7 @@ function make(tag, className, text) {
 
 /** Bir elemanın içeriğini temizler. */
 function clear(el) {
-  while (el.firstChild) el.removeChild(el.firstChild);
+  while (el.firstChild) el.firstChild.remove();
 }
 
 const STORE_KEY = 'zihin.state.v1';

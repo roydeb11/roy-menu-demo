@@ -35,7 +35,9 @@ struct StatsView: View {
         .navigationBarTitleDisplayMode(.large)
         .confirmationDialog("Tüm istatistikler sıfırlansın mı?", isPresented: $confirmReset, titleVisibility: .visible) {
             Button("Sıfırla", role: .destructive) { store.resetStatistics() }
-            Button("Vazgeç", role: .cancel) { }
+            Button("Vazgeç", role: .cancel) {
+                // Vazgeçmek yalnızca pencereyi kapatır; durum değişmez.
+            }
         }
     }
 

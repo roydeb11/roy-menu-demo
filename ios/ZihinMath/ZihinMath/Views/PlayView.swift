@@ -46,10 +46,11 @@ struct PlayView: View {
         // Yalnızca 60 saniye modu biter; sonsuz mod hiçbir zaman bu ekrana düşmez.
         .fullScreenCover(isPresented: Binding(
             get: { store.mode == .timed && !store.isRunning && store.question != nil },
-            // Kapanma yalnızca özet ekranındaki düğmelerle olur; sürükleyerek
-            // kapatmak turu yarıda bırakacağı için burada bilerek hiçbir şey
-            // yapılmıyor.
-            set: { _ in }
+            set: { _ in
+                // Kapanma yalnızca özet ekranındaki düğmelerle olur;
+                // sürükleyerek kapatmak turu yarıda bırakacağı için burada
+                // bilerek hiçbir şey yapılmıyor.
+            }
         )) {
             SummaryView(
                 onRestart: { store.start(.timed) },

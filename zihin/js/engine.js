@@ -117,7 +117,7 @@ function buildOptions(r, answer, errors, opts = {}) {
 /** Rakam yer değiştirme hatası (ör. 143 → 134) */
 function digitSwap(n) {
   const s = String(Math.round(Math.abs(n)));
-  if (s.length < 2) return NaN;
+  if (s.length < 2) return Number.NaN;
   const i = s.length - 2;
   const a = s.split('');
   [a[i], a[i + 1]] = [a[i + 1], a[i]];
