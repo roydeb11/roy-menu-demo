@@ -1,7 +1,7 @@
 /* Uygulama ikonlarını Chromium ile üretir. Üç ton dışına çıkılmaz. */
 const { chromium } = require('playwright');
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
 
 const ROOT = path.join(__dirname, '..');
 
@@ -54,7 +54,7 @@ const html = (o) => `<!doctype html><meta charset="utf-8"><style>
     if (v.size === 1024) fs.writeFileSync(out, shot);
     else {
       await page.setViewportSize({ width: v.size, height: v.size });
-      await page.setContent(markup.replace(/1024px/g, v.size + 'px')
+      await page.setContent(markup.replaceAll('1024px', v.size + 'px')
         .replace('width:900px;height:900px', `width:${Math.round(v.size * 0.88)}px;height:${Math.round(v.size * 0.88)}px`)
         .replace(/width:(660|520)px;height:(660|520)px/, (m, a) => `width:${Math.round(v.size * (a === '660' ? 0.645 : 0.508))}px;height:${Math.round(v.size * (a === '660' ? 0.645 : 0.508))}px`)
         .replace(/font-size:(420|320)px/, (m, a) => `font-size:${Math.round(v.size * (a === '420' ? 0.41 : 0.3125))}px`)

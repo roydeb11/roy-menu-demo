@@ -16,6 +16,7 @@ npx playwright install chromium
 | `npm run fit` | Üç iPhone boyutunda her soru tipinde taşma olup olmadığını ölçer. |
 | `npm run shots` | Her kategori ve her görsel tipi için temiz ekran görüntüsü üretir. |
 | `npm run icons` | Uygulama ikonlarını (iOS + PWA) Chromium ile üretir. |
+| `node sonar-findings.js <owner/repo> <pr>` | SonarCloud bulgularını **GitHub Checks API'sinden** okur. `sonarcloud.io`'ya doğrudan erişilemediğinde işe yarar: SonarCloud sonuçlarını check-run anotasyonu olarak GitHub'a yazar ve herkese açık depolarda bu uç nokta kimlik doğrulamasız okunabilir. Hız sınırına takılırsanız `SONAR_FINDINGS_TOKEN` verin. |
 
 `e2e`, `fit` ve `shots` için `zihin/` klasörünün `http://127.0.0.1:8099` üzerinden
 sunuluyor olması gerekir — kök dizindeki `./verify.sh` bunu kendisi başlatır.

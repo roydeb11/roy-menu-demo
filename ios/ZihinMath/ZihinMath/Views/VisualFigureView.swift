@@ -51,7 +51,8 @@ struct VisualFigureView: View {
 // MARK: - Noktalar
 
 private struct DotsFigure: View {
-    let groups: Int, per: Int
+    let groups: Int
+    let per: Int
 
     var body: some View {
         let columns = min(groups, 3)
@@ -74,7 +75,8 @@ private struct DotsFigure: View {
 // MARK: - Izgara
 
 private struct GridFigure: View {
-    let rows: Int, cols: Int
+    let rows: Int
+    let cols: Int
 
     var body: some View {
         VStack(spacing: 5) {
@@ -95,7 +97,8 @@ private struct GridFigure: View {
 // MARK: - Çubuklar
 
 private struct BarsFigure: View {
-    let a: Int, b: Int
+    let a: Int
+    let b: Int
     @State private var grown = false
 
     var body: some View {
@@ -152,8 +155,10 @@ private struct PieFigure: View {
 // MARK: - Sayı doğrusu
 
 private struct NumberLineFigure: View {
-    let start: Double, end: Double
-    let ticks: Int, at: Int
+    let start: Double
+    let end: Double
+    let ticks: Int
+    let at: Int
     @State private var shown = false
 
     var body: some View {

@@ -1,6 +1,6 @@
 /* Her kategori için temiz ekran görüntüsü + kartın gerçekten dolu olduğunun kanıtı. */
 const { chromium, devices } = require('playwright');
-const fs = require('fs'), path = require('path');
+const fs = require('node:fs'), path = require('node:path');
 const SHOTS = path.join(__dirname, '..', 'docs', 'screenshots');
 const EXEC = require('./chrome')();
 const BASE = 'http://127.0.0.1:8099';

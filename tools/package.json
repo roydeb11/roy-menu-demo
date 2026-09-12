@@ -8,7 +8,8 @@
     "fit": "node fitcheck.js",
     "shots": "node shots.js",
     "icons": "node makeicons.js",
-    "lint": "./lint.sh"
+    "lint": "./lint.sh",
+    "sonar": "node sonar-findings.js"
   },
   "dependencies": {
     "eslint": "^9.39.0",

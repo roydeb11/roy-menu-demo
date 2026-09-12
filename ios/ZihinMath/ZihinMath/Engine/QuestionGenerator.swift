@@ -80,11 +80,12 @@ struct RawQuestion {
 
 // MARK: - Dört işlem
 
-func genAdd(_ r: inout Rand, level L: Int) -> RawQuestion {
-    var a: Double, b: Double
+func genAdd(_ r: inout Rand, level: Int) -> RawQuestion {
+    var a: Double
+    var b: Double
     var decimals = false
 
-    switch L {
+    switch level {
     case ...2:  a = Double(r.int(2, 20));      b = Double(r.int(2, 20))
     case 3...4: a = Double(r.int(12, 99));     b = Double(r.int(12, 99))
     case 5...6: a = Double(r.int(120, 899));   b = Double(r.int(25, 199))
@@ -92,7 +93,7 @@ func genAdd(_ r: inout Rand, level L: Int) -> RawQuestion {
     default:    a = Double(r.int(1500, 9999)); b = Double(r.int(1500, 9999))
     }
 
-    if L >= 5 && r.bool(0.28) {
+    if level >= 5 && r.bool(0.28) {
         decimals = true
         a = round2(Double(r.int(15, 480)) + r.pick([0.25, 0.5, 0.75, 0.9, 0.05]))
         b = round2(Double(r.int(5, 260)) + r.pick([0.25, 0.5, 0.75, 0.1]))
@@ -111,11 +112,12 @@ func genAdd(_ r: inout Rand, level L: Int) -> RawQuestion {
     )
 }
 
-func genSub(_ r: inout Rand, level L: Int) -> RawQuestion {
-    var a: Double, b: Double
+func genSub(_ r: inout Rand, level: Int) -> RawQuestion {
+    var a: Double
+    var b: Double
     var decimals = false
 
-    switch L {
+    switch level {
     case ...2:  a = Double(r.int(6, 20));       b = Double(r.int(1, Int(a) - 1))
     case 3...4: a = Double(r.int(30, 99));      b = Double(r.int(5, Int(a) - 2))
     case 5...6: a = Double(r.int(150, 900));    b = Double(r.int(20, Int(a) - 10))
@@ -123,7 +125,7 @@ func genSub(_ r: inout Rand, level L: Int) -> RawQuestion {
     default:    a = Double(r.int(3000, 9999));  b = Double(r.int(900, Int(a) - 200))
     }
 
-    if L >= 5 && r.bool(0.25) {
+    if level >= 5 && r.bool(0.25) {
         decimals = true
         a = round2(Double(r.int(60, 900)) + r.pick([0.5, 0.25, 0.75]))
         b = round2(Double(r.int(10, max(11, Int(a) - 10))) + r.pick([0.25, 0.5]))
@@ -142,9 +144,10 @@ func genSub(_ r: inout Rand, level L: Int) -> RawQuestion {
     )
 }
 
-func genMul(_ r: inout Rand, level L: Int) -> RawQuestion {
-    let a: Double, b: Double
-    switch L {
+func genMul(_ r: inout Rand, level: Int) -> RawQuestion {
+    let a: Double
+    let b: Double
+    switch level {
     case ...2:  a = Double(r.int(2, 6));    b = Double(r.int(2, 9))
     case 3...4: a = Double(r.int(3, 12));   b = Double(r.int(3, 12))
     case 5...6: a = Double(r.int(11, 29));  b = Double(r.int(3, 12))
@@ -165,10 +168,11 @@ func genMul(_ r: inout Rand, level L: Int) -> RawQuestion {
     )
 }
 
-func genDiv(_ r: inout Rand, level L: Int) -> RawQuestion {
+func genDiv(_ r: inout Rand, level: Int) -> RawQuestion {
     // Bölünen, tam bölünecek biçimde kurulur — kalan asla olmaz.
-    let d: Double, q: Double
-    switch L {
+    let d: Double
+    let q: Double
+    switch level {
     case ...2:  d = Double(r.int(2, 5));   q = Double(r.int(2, 9))
     case 3...4: d = Double(r.int(2, 9));   q = Double(r.int(3, 12))
     case 5...6: d = Double(r.int(3, 12));  q = Double(r.int(4, 25))
@@ -191,13 +195,13 @@ func genDiv(_ r: inout Rand, level L: Int) -> RawQuestion {
 
 // MARK: - Yüzde
 
-func genPct(_ r: inout Rand, level L: Int) -> RawQuestion {
+func genPct(_ r: inout Rand, level: Int) -> RawQuestion {
     let easyP: [Int] = [10, 20, 25, 50, 5, 75]
     let hardP: [Int] = [12, 15, 18, 30, 35, 40, 45, 60, 65, 80, 90, 3, 8]
 
     enum Mode { case of, whatPct, discount, increase, reverse }
     let mode: Mode
-    switch L {
+    switch level {
     case ...3:  mode = .of
     case 4...6: mode = r.pick([.of, .of, .whatPct, .discount])
     default:    mode = r.pick([.of, .whatPct, .discount, .increase, .reverse])
@@ -205,9 +209,9 @@ func genPct(_ r: inout Rand, level L: Int) -> RawQuestion {
 
     switch mode {
     case .of:
-        let p = L <= 4 ? r.pick(easyP) : r.pick(easyP + hardP)
+        let p = level <= 4 ? r.pick(easyP) : r.pick(easyP + hardP)
         let base: Int
-        switch L {
+        switch level {
         case ...3:  base = r.money(40, 400, step: 20)
         case 4...6: base = r.money(80, 1200, step: 20)
         default:    base = r.money(200, 9000, step: 50)

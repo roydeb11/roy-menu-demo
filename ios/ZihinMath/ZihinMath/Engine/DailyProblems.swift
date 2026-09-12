@@ -403,7 +403,7 @@ private let templates: [(inout Rand) -> DailyDraft?] = [
 /// Toplam şablon sayısı — testlerde kapsama doğrulaması için.
 let dailyTemplateCount = templates.count
 
-func genDaily(_ r: inout Rand, level L: Int) -> RawQuestion {
+func genDaily(_ r: inout Rand, level: Int) -> RawQuestion {
     for _ in 0..<8 {
         let idx = r.int(0, templates.count - 1)
         guard let d = templates[idx](&r) else { continue }
@@ -414,5 +414,5 @@ func genDaily(_ r: inout Rand, level L: Int) -> RawQuestion {
                                   integer: d.answer == d.answer.rounded()),
             hint: d.hint, signature: d.signature)
     }
-    return genPct(&r, level: L)
+    return genPct(&r, level: level)
 }

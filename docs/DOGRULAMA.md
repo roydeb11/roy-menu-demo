@@ -41,24 +41,56 @@ Toplam üretilen ve doğrulanan soru: **1.434.000**.
 | HTML | `html-validate` (doctype, düğme tipi, erişilebilir ad, satır içi stil, …) | temiz |
 
 > Bu adım, PR'da kırmızı yanan **SonarCloud Quality Gate**'i (Reliability D,
-> Security C) çözmek için eklendi. `sonarcloud.io` bu ortamda çıkış
-> politikasıyla engelli olduğu (HTTP 403) ve check satır içi açıklama
-> üretmediği için bulgular, SonarSource'un kural motoru yerelde çalıştırılarak
-> bulundu. Düzeltilenler:
+> Security C) çözmek için eklendi.
+>
+> **Bulgulara nasıl ulaşıldı.** `sonarcloud.io` bu ortamda çıkış politikasıyla
+> engelli (hem `curl` hem sayfa getirme 403/`EGRESS_BLOCKED`), SonarCloud
+> check'i `output.text` üretmiyor ve PR'da satır içi inceleme yorumu yok.
+> Çözüm: SonarCloud sonuçlarını **check-run anotasyonu** olarak GitHub'a
+> yazıyor ve herkese açık depolarda bu uç nokta kimlik doğrulamasız
+> okunabiliyor. `tools/sonar-findings.js` bu yolu kullanıyor:
+>
+> ```bash
+> node tools/sonar-findings.js roydeb11/roy-menu-demo 2
+> ```
+>
+> Böylece 47 benzersiz bulgunun tamamı (8 engelleyen + 39 uyarı) satır satır
+> okundu. Ortaya çıkan önemli bir gerçek: SonarCloud bu depoda **Swift ve
+> kabuk betiklerini de analiz ediyor** — ilk iki turda yalnızca JavaScript,
+> CSS ve HTML'e bakıldığı için kapı kırmızı kalmıştı.
+>
+> **Engelleyen 8 bulgu ve düzeltmeleri**
+>
+> | Dosya | Bulgu | Düzeltme |
+> |---|---|---|
+> | `verify.sh` (5 satır) | Koşullu testlerde `[` yerine `[[` kullanılmalı — `[` sözcük bölünmesine açık | Altı testin hepsi `[[ ]]` oldu (biri anotasyon listesinde yoktu, o da düzeltildi) |
+> | `PlayView.swift:49` | Boş closure açıklamasız | `set: { _ in }`'in neden bilerek boş olduğu yazıldı |
+> | `HapticEngine.swift:71` | Boş closure açıklamasız | `stoppedHandler`'ın neden boş bırakıldığı yazıldı |
+> | `tools/swiftcheck.js:39` | `.sort()` karşılaştırıcısız — öğeleri alfabetik sıralar | `sort((a, b) => a.localeCompare(b))` |
+>
+> **39 uyarının tamamı da düzeltildi**
+>
+> * Swift: `level L: Int` parametresi `level` oldu (ad kuralı, 5 yer);
+>   virgülle tek satıra sıkıştırılmış bildirimler ayrıldı (11 yer);
+>   `FlowLayout`'ta kullanılmayan `cache`/`proposal` parametreleri `_` oldu.
+> * JavaScript: `node:fs` / `node:path` önekleri (10 yer), `replaceAll`
+>   (4 yer), `Number.parseFloat` / `Number.parseInt` (3 yer), gereksiz boş
+>   nesne, isteğe bağlı zincir, `last2` için `Set`.
+> * `tools/package-lock.json` eklendi — araç sürümleri artık öngörülebilir.
+>
+> **Önceki turlarda düzeltilenler (bulgular okunmadan, önlem olarak)**
 >
 > * **`innerHTML` tamamen kaldırıldı.** İstatistik listesi `localStorage`'tan
->   okunan veriyi `innerHTML`'e yazıyordu — Sonar'ın taint analizinde bu
->   DOM-tabanlı XSS açığıdır (Security). Yerine `document.createElement`
->   tabanlı güvenli kurulum; SVG için `DOMParser` + `importNode` geldi.
-> * `Math.random()` yedeği kaldırıldı (S2245 PRNG); tohum artık yalnızca
->   `crypto.getRandomValues`, o yoksa saat + sayaç karışımı.
-> * `void el.offsetWidth` reflow hilesi yerine Web Animations API ile
->   animasyon yeniden başlatma.
-> * İç içe üçlü operatörler, iç içe şablon dizeleri, iç içe atamalar
->   çıkarıldı; `genVisual` ve `fitcheck` bilişsel karmaşıklık sınırının
->   altına indirildi; ölü atama ve döngü sayacı mutasyonu giderildi.
-> * HTML: `<!DOCTYPE>` büyük harf, her düğmeye `type="button"`, cevap
->   düğmelerine erişilebilir ad, bütün satır içi stiller CSS sınıflarına.
+>   okunan veriyi `innerHTML`'e yazıyordu; yerine `document.createElement`
+>   tabanlı güvenli kurulum ve SVG için `DOMParser` + `importNode` geldi.
+> * `Math.random()` yedeği kaldırıldı; tohum artık `crypto.getRandomValues`.
+> * `haptics.js` `localStorage`'a korumasız erişiyordu — Safari gizli modda
+>   istisna atıp uygulamayı açılışta düşürürdü; artık `try/catch` içinde.
+> * `void el.offsetWidth` yerine Web Animations API; null korumaları;
+>   iç içe üçlü/şablon/atamalar çıkarıldı; bilişsel karmaşıklık düşürüldü.
+> * Erişilebilirlik: `viewport`'tan `maximum-scale=1` kaldırıldı,
+>   `role="img"` olan her SVG'ye `<title>` eklendi, düğmelere `type="button"`
+>   ve erişilebilir ad verildi, satır içi stiller CSS'e taşındı.
 
 ## 3) Swift kaynakları — gerçek gramerle ayrıştırıldı
 

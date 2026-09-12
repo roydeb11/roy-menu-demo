@@ -721,8 +721,8 @@ export class QuestionEngine {
   /** Kategori seçimi: son iki soruyla aynı olmamaya çalışır. */
   _pickCategory() {
     if (this.categories.length === 1) return this.categories[0];
-    const last2 = this.recentCats.slice(-2);
-    const fresh = this.categories.filter((c) => !last2.includes(c));
+    const last2 = new Set(this.recentCats.slice(-2));
+    const fresh = this.categories.filter((c) => !last2.has(c));
     return this.r.pick(fresh.length ? fresh : this.categories);
   }
 

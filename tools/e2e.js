@@ -2,7 +2,7 @@
  * iPhone 15 Pro görünümünde açar, oynar, ekran görüntüsü alır,
  * üç-ton palet kuralını denetler. */
 const { chromium, devices } = require('playwright');
-const fs = require('fs'), path = require('path');
+const fs = require('node:fs'), path = require('node:path');
 
 const SHOTS = path.join(__dirname, '..', 'docs', 'screenshots');
 const BASE = safeBase(process.env.BASE);
@@ -29,8 +29,8 @@ const ok = (c, m, extra) => { if (c) { pass++; console.log('  ✓ ' + m); } else
 function classify(css) {
   const m = css.match(/rgba?\(([^)]+)\)/);
   if (!m) return 'other';
-  const [r, g, b, a = '1'] = m[1].split(',').map((x) => parseFloat(x));
-  if (parseFloat(a) === 0) return 'transparent';
+  const [r, g, b, a = '1'] = m[1].split(',').map((x) => Number.parseFloat(x));
+  if (Number.parseFloat(a) === 0) return 'transparent';
   if (r === g && g === b) return 'achromatic';                    // siyah↔beyaz ekseni
   // Apple systemBlue: #0A84FF (koyu) ve #007AFF (açık) + alfa varyasyonları
   if (Math.abs(r - 10) <= 10 && Math.abs(g - 132) <= 8 && b >= 245) return 'blue';
@@ -169,7 +169,7 @@ function classify(css) {
   await page.waitForTimeout(600);
   ok(await page.locator('#screen-stats.is-active').isVisible(), 'istatistik ekranı açıldı');
   const asked = await page.locator('#st-asked').textContent();
-  ok(parseInt(asked.replace(/\./g, ''), 10) >= 250, `çözülen soru sayısı kaydedildi: ${asked}`);
+  ok(Number.parseInt(asked.replaceAll('.', ''), 10) >= 250, `çözülen soru sayısı kaydedildi: ${asked}`);
   ok((await page.locator('#stat-list .stat-row').count()) === 7, '7 konunun başarısı listelendi');
   await page.screenshot({ path: path.join(SHOTS, '07-istatistik.png') });
   await audit('istatistik');

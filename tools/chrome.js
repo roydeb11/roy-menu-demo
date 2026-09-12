@@ -2,8 +2,8 @@
  * CHROME_PATH verilmişse o kullanılır; yoksa Playwright'ın indirdiği sürüm
  * ya da sistemde kurulu Chrome/Chromium denenir. Hiçbiri yoksa undefined
  * döner ve Playwright kendi varsayılanını kullanır. */
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 /** Yalnızca var olan, normal (dizin değil) bir dosyayı kabul eder. */
 function firstRegularFile(paths) {

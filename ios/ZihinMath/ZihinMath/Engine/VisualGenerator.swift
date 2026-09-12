@@ -8,11 +8,11 @@
 
 import Foundation
 
-func genVisual(_ r: inout Rand, level L: Int) -> RawQuestion {
+func genVisual(_ r: inout Rand, level: Int) -> RawQuestion {
     enum Kind { case dots, grid, bars, pie, numberLine, coins }
 
     let kinds: [Kind]
-    switch L {
+    switch level {
     case ...2:  kinds = [.dots, .grid, .bars]
     case 3...5: kinds = [.dots, .grid, .bars, .pie, .numberLine]
     default:    kinds = [.grid, .bars, .pie, .numberLine, .coins]
@@ -21,8 +21,8 @@ func genVisual(_ r: inout Rand, level L: Int) -> RawQuestion {
     switch r.pick(kinds) {
 
     case .dots:
-        let g = r.int(2, L <= 3 ? 4 : 6)
-        let per = r.int(2, L <= 3 ? 5 : 9)
+        let g = r.int(2, level <= 3 ? 4 : 6)
+        let per = r.int(2, level <= 3 ? 5 : 9)
         let answer = Double(g * per)
         return RawQuestion(
             category: .visual, expression: nil, text: "Toplam kaç nokta var?",
@@ -34,8 +34,8 @@ func genVisual(_ r: inout Rand, level L: Int) -> RawQuestion {
             signature: "v:dots:\(g):\(per)")
 
     case .grid:
-        let rows = r.int(2, L <= 4 ? 6 : 9)
-        let cols = r.int(2, L <= 4 ? 6 : 9)
+        let rows = r.int(2, level <= 4 ? 6 : 9)
+        let cols = r.int(2, level <= 4 ? 6 : 9)
         let answer = Double(rows * cols)
         return RawQuestion(
             category: .visual, expression: nil, text: "Izgaradaki kare sayısı kaçtır?",

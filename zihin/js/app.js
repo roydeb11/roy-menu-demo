@@ -45,7 +45,7 @@ function load() {
     const raw = localStorage.getItem(STORE_KEY);
     if (!raw) return defaultState();
     const s = { ...defaultState(), ...JSON.parse(raw) };
-    s.perCat = { ...defaultState().perCat, ...(s.perCat ?? {}) };
+    s.perCat = { ...defaultState().perCat, ...s.perCat };
     s.cats = (s.cats ?? []).filter((c) => CATEGORIES.includes(c));
     if (!s.cats.length) s.cats = CATEGORIES.slice();
     return s;
@@ -105,7 +105,7 @@ function startGame(mode) {
 }
 
 function tick() {
-  if (!sess || sess.mode !== 'timed') return;
+  if (sess?.mode !== 'timed') return;
   sess.timeLeft -= 1;
   updateHUD();
   if (sess.timeLeft <= 5 && sess.timeLeft > 0) haptics.play('selection');

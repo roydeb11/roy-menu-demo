@@ -48,7 +48,8 @@ struct EngineTests {
                 let expression = try #require(q.expression)
                 let parts = expression.split(separator: " ").map(String.init)
                 #expect(parts.count == 3)
-                let a = parseTR(parts[0]), b = parseTR(parts[2])
+                let a = parseTR(parts[0])
+                let b = parseTR(parts[2])
                 let expected: Double
                 switch parts[1] {
                 case "+": expected = a + b

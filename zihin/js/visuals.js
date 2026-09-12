@@ -6,7 +6,7 @@ const DIM = 'var(--ink-3)';
 
 /** XML metin içeriğini kaçışlar. */
 const esc = (s) => String(s)
-  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
 /**
  * Ortak SVG sarmalayıcı. `role="img"` kullanan her çizim, ekran okuyucular
