@@ -1,0 +1,210 @@
+name: TestFlight
+
+# Zihin'i App Store Connect'e (TestFlight) yükler.
+#
+# Gereken 4 depo gizli anahtarı (Settings → Secrets and variables → Actions):
+#   APPLE_TEAM_ID         – 10 karakterlik Takım Kimliği (developer.apple.com → Membership)
+#   APPSTORE_KEY_ID       – App Store Connect API anahtar kimliği
+#   APPSTORE_ISSUER_ID    – App Store Connect API "Issuer ID"
+#   APPSTORE_PRIVATE_KEY  – indirilen AuthKey_XXXX.p8 dosyasının TAM içeriği
+#
+# Ayrıntılı kurulum: docs/TESTFLIGHT.md
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "macOS runner imajı (Liquid Glass için Xcode 26 gerekir)"
+        type: string
+        default: "macos-15"
+      bundle_id:
+        description: "Paket kimliği (boşsa projedeki com.roy.zihin kullanılır)"
+        type: string
+        default: ""
+      marketing_version:
+        description: "Sürüm numarası, örn. 1.0.1 (boşsa projedeki kalır)"
+        type: string
+        default: ""
+      upload:
+        description: "TestFlight'a yükle (kapatırsan yalnızca derleyip IPA üretir)"
+        type: boolean
+        default: true
+  push:
+    tags:
+      - "ios-v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  build-and-upload:
+    runs-on: ${{ inputs.runner || 'macos-15' }}
+    timeout-minutes: 60
+
+    env:
+      PROJECT: ios/ZihinMath/ZihinMath.xcodeproj
+      SCHEME: ZihinMath
+      ARCHIVE: ${{ github.workspace }}/build/Zihin.xcarchive
+      EXPORT_DIR: ${{ github.workspace }}/build/export
+
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v4
+
+      - name: En yeni Xcode'u seç
+        run: |
+          set -euo pipefail
+          app="/Applications/Xcode.app"
+          newest="$(ls -d /Applications/Xcode_*.app 2>/dev/null \
+            | sed 's|.*/Xcode_||; s|\.app$||' \
+            | sort -t. -k1,1n -k2,2n -k3,3n \
+            | tail -1 || true)"
+          if [[ -n "${newest}" && -d "/Applications/Xcode_${newest}.app" ]]; then
+            app="/Applications/Xcode_${newest}.app"
+          fi
+          if [[ ! -d "${app}" ]]; then
+            echo "::error::Bu runner'da Xcode bulunamadı."
+            exit 1
+          fi
+          echo "Seçilen: $app"
+          sudo xcode-select -s "$app/Contents/Developer"
+          xcodebuild -version
+          echo "--- yüklü iOS SDK'ları ---"
+          xcodebuild -showsdks | grep -i iphoneos || true
+          # iOS 26 SDK varsa gerçek Liquid Glass derlenir, yoksa materyal yedeği.
+          if xcodebuild -showsdks | grep -qiE "iOS 2[6-9]|iOS [3-9][0-9]"; then
+            echo "::notice::iOS 26+ SDK bulundu — gerçek Liquid Glass derlenecek."
+          else
+            echo "::warning::iOS 26 SDK yok — uygulama .ultraThinMaterial yedeğiyle derlenecek (derleme yine başarılı olur)."
+          fi
+
+      - name: API anahtarını yerleştir
+        env:
+          KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${KEY_ID}" || -z "${PRIVATE_KEY}" ]]; then
+            echo "::error::APPSTORE_KEY_ID ve APPSTORE_PRIVATE_KEY gizli anahtarları tanımlı değil. docs/TESTFLIGHT.md'ye bak."
+            exit 1
+          fi
+          # altool anahtarı bu klasörlerde ada göre arar; xcodebuild ise tam yol ister.
+          mkdir -p ~/private_keys
+          printf '%s\n' "${PRIVATE_KEY}" > ~/"private_keys/AuthKey_${KEY_ID}.p8"
+          chmod 600 ~/"private_keys/AuthKey_${KEY_ID}.p8"
+          echo "AUTH_KEY_PATH=$HOME/private_keys/AuthKey_${KEY_ID}.p8" >> "$GITHUB_ENV"
+
+      - name: Sürüm ve paket kimliğini belirle
+        env:
+          IN_BUNDLE: ${{ inputs.bundle_id }}
+          IN_VERSION: ${{ inputs.marketing_version }}
+        run: |
+          set -euo pipefail
+          # Her yükleme için benzersiz, artan derleme numarası.
+          echo "BUILD_NUMBER=${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+          overrides=""
+          if [[ -n "${IN_BUNDLE}" ]]; then
+            overrides="${overrides} PRODUCT_BUNDLE_IDENTIFIER=${IN_BUNDLE}"
+          fi
+          if [[ -n "${IN_VERSION}" ]]; then
+            overrides="${overrides} MARKETING_VERSION=${IN_VERSION}"
+          fi
+          echo "BUILD_OVERRIDES=${overrides}" >> "$GITHUB_ENV"
+          echo "Derleme numarası: ${GITHUB_RUN_NUMBER}${overrides:+, ek ayarlar:${overrides}}"
+
+      - name: Arşivle
+        env:
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${TEAM_ID}" || -z "${ISSUER_ID}" ]]; then
+            echo "::error::APPLE_TEAM_ID ve APPSTORE_ISSUER_ID gizli anahtarları tanımlı değil."
+            exit 1
+          fi
+          # shellcheck disable=SC2086
+          xcodebuild archive \
+            -project "${PROJECT}" \
+            -scheme "${SCHEME}" \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "${ARCHIVE}" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "${AUTH_KEY_PATH}" \
+            -authenticationKeyID "${KEY_ID}" \
+            -authenticationKeyIssuerID "${ISSUER_ID}" \
+            DEVELOPMENT_TEAM="${TEAM_ID}" \
+            CURRENT_PROJECT_VERSION="${BUILD_NUMBER}" \
+            ${BUILD_OVERRIDES}
+
+      - name: IPA'ya dışa aktar
+        env:
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          # Plist elle yazılmıyor, XML'i kütüphane üretiyor. İki kazanç:
+          # YAML girintisi "<?xml" satırını kaydırıp dosyayı bozamıyor ve
+          # kaynakta şifresiz protokollü DOCTYPE tanımlayıcısı kalmıyor.
+          # Çıktı Apple'ın kanonik biçimi; runner'da plutil ile denetleniyor.
+          write_options () {
+            python3 -c 'import plistlib,sys; f=open(sys.argv[3],"wb"); plistlib.dump({"method":sys.argv[1],"teamID":sys.argv[2],"destination":"export","uploadSymbols":True,"signingStyle":"automatic"}, f); f.close()' \
+              "$1" "${TEAM_ID}" "${RUNNER_TEMP}/ExportOptions.plist"
+            plutil -lint "${RUNNER_TEMP}/ExportOptions.plist"
+          }
+          export_with () {
+            write_options "$1"
+            xcodebuild -exportArchive \
+              -archivePath "${ARCHIVE}" \
+              -exportPath "${EXPORT_DIR}" \
+              -exportOptionsPlist "${RUNNER_TEMP}/ExportOptions.plist" \
+              -allowProvisioningUpdates \
+              -authenticationKeyPath "${AUTH_KEY_PATH}" \
+              -authenticationKeyID "${KEY_ID}" \
+              -authenticationKeyIssuerID "${ISSUER_ID}"
+          }
+          # Xcode 15+ "app-store-connect" bekler; eski sürümler "app-store".
+          if ! export_with "app-store-connect"; then
+            echo "::warning::'app-store-connect' yöntemi kabul edilmedi, 'app-store' ile yeniden deneniyor."
+            export_with "app-store"
+          fi
+          ls -lh "${EXPORT_DIR}"
+          ipa="$(find "${EXPORT_DIR}" -maxdepth 1 -name '*.ipa' | head -1)"
+          if [[ -z "${ipa}" ]]; then
+            echo "::error::IPA üretilemedi."
+            exit 1
+          fi
+          echo "IPA_PATH=${ipa}" >> "$GITHUB_ENV"
+
+      - name: IPA'yı iş çıktısı olarak sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zihin-ipa-${{ github.run_number }}
+          path: ${{ env.EXPORT_DIR }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: TestFlight'a yükle
+        if: ${{ inputs.upload != false }}
+        env:
+          KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          xcrun altool --validate-app \
+            -f "${IPA_PATH}" -t ios \
+            --apiKey "${KEY_ID}" --apiIssuer "${ISSUER_ID}"
+          xcrun altool --upload-app \
+            -f "${IPA_PATH}" -t ios \
+            --apiKey "${KEY_ID}" --apiIssuer "${ISSUER_ID}"
+          echo "::notice::Yükleme bitti. App Store Connect işlemeyi bitirince (5–15 dk) TestFlight'ta görünür."
+
+      - name: Anahtarı sil
+        if: always()
+        run: rm -rf ~/private_keys
