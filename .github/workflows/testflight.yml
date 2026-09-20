@@ -149,22 +149,13 @@ jobs:
           ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
         run: |
           set -euo pipefail
-          # Heredoc kullanmıyoruz: YAML girintisi plist'in başına boşluk koyar ve
-          # "<?xml" satır başında olmadığı için dosya geçersiz XML olur.
+          # Plist elle yazılmıyor, XML'i kütüphane üretiyor. İki kazanç:
+          # YAML girintisi "<?xml" satırını kaydırıp dosyayı bozamıyor ve
+          # kaynakta şifresiz protokollü DOCTYPE tanımlayıcısı kalmıyor.
+          # Çıktı Apple'ın kanonik biçimi; runner'da plutil ile denetleniyor.
           write_options () {
-            {
-              printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>'
-              printf '%s\n' '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">'
-              printf '%s\n' '<plist version="1.0">'
-              printf '%s\n' '<dict>'
-              printf '<key>method</key><string>%s</string>\n' "$1"
-              printf '<key>teamID</key><string>%s</string>\n' "${TEAM_ID}"
-              printf '%s\n' '<key>destination</key><string>export</string>'
-              printf '%s\n' '<key>uploadSymbols</key><true/>'
-              printf '%s\n' '<key>signingStyle</key><string>automatic</string>'
-              printf '%s\n' '</dict>'
-              printf '%s\n' '</plist>'
-            } > "${RUNNER_TEMP}/ExportOptions.plist"
+            python3 -c 'import plistlib,sys; f=open(sys.argv[3],"wb"); plistlib.dump({"method":sys.argv[1],"teamID":sys.argv[2],"destination":"export","uploadSymbols":True,"signingStyle":"automatic"}, f); f.close()' \
+              "$1" "${TEAM_ID}" "${RUNNER_TEMP}/ExportOptions.plist"
             plutil -lint "${RUNNER_TEMP}/ExportOptions.plist"
           }
           export_with () {
