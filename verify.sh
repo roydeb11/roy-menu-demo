@@ -47,13 +47,17 @@ Object.keys(t).filter(k=>!k.endsWith('_comment')).forEach(k=>console.log('  · h
 " || rc=1
 
 echo
-echo "=== 5) Tarayıcıda uçtan uca (Chromium, iPhone görünümü) ==="
+echo "=== 5) CI workflow'ları (YAML + her kabuk bloğu bash -n) ==="
+node tools/workflowcheck.js || rc=1
+
+echo
+echo "=== 6) Tarayıcıda uçtan uca (Chromium, iPhone görünümü) ==="
 (cd zihin && python3 -m http.server 8099 --bind 127.0.0.1 >/dev/null 2>&1 & echo $! > /tmp/zihin_verify.pid)
 sleep 1
 node tools/e2e.js || rc=1
 
 echo
-echo "=== 6) Yerleşim: üç iPhone boyutunda taşma yok ==="
+echo "=== 7) Yerleşim: üç iPhone boyutunda taşma yok ==="
 node tools/fitcheck.js || rc=1
 
 kill "$(cat /tmp/zihin_verify.pid)" 2>/dev/null

@@ -13,8 +13,18 @@
 //    func glassEffectTransition(_ transition: GlassEffectTransition) -> some View
 //    static var glass: GlassButtonStyle   (PrimitiveButtonStyle)
 //
-//  iOS 26 öncesinde aynı hiyerarşi `.ultraThinMaterial` ile boyanır; böylece
-//  uygulama eski cihazlarda da doğru görünür.
+//  Burada İKİ AYRI koruma var; ikisi de gerekli:
+//
+//  1. Çalışma zamanı — `#available(iOS 26.0, *)`
+//     iOS 26 öncesi cihazlarda cam yerine `.ultraThinMaterial` yedeği çizilir.
+//
+//  2. Derleme zamanı — `#if canImport(FoundationModels)`
+//     `glassEffect` sembolü yalnızca iOS 26 SDK'sında vardır. Daha eski bir SDK
+//     ile derlenirken `#available` derlemeyi KURTARMAZ; sembol hiç bulunmadığı
+//     için derleme hata verir. FoundationModels de ilk kez iOS 26 SDK'sıyla
+//     geldiğinden, içe aktarılabilir olması "SDK ≥ 26" anlamına gelir.
+//     Böylece proje Xcode 16 ile de derlenir (materyal yedeğine düşer),
+//     Xcode 26 ile gerçek Liquid Glass'ı kullanır.
 //
 
 import SwiftUI
@@ -38,22 +48,28 @@ struct LiquidGlassBackground: ViewModifier {
     var interactive: Bool = false
 
     func body(content: Content) -> some View {
+        #if canImport(FoundationModels)
         if #available(iOS 26.0, *) {
-            content.glassEffect(glass, in: anyShape)
+            content.glassEffect(
+                Glass.regular
+                    .tint(tinted ? Palette.blue.opacity(0.55) : nil)
+                    .interactive(interactive),
+                in: anyShape
+            )
         } else {
-            content
-                .background(fallbackFill, in: anyShape)
-                .overlay(anyShape.stroke(strokeColor, lineWidth: 1))
-                .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 10)
+            materialFallback(content)
         }
+        #else
+        materialFallback(content)
+        #endif
     }
 
-    @available(iOS 26.0, *)
-    private var glass: Glass {
-        var g: Glass = .regular
-        if tinted { g = g.tint(Palette.blue.opacity(0.55)) }
-        if interactive { g = g.interactive() }
-        return g
+    /// iOS 26 öncesinde — ya da iOS 26 SDK'sı olmadan derlendiğinde — çizilen yüzey.
+    private func materialFallback(_ content: Content) -> some View {
+        content
+            .background(fallbackFill, in: anyShape)
+            .overlay(anyShape.stroke(strokeColor, lineWidth: 1))
+            .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 10)
     }
 
     private var anyShape: AnyShape {
@@ -85,11 +101,15 @@ extension View {
     /// yan yana duran cam yüzeyler mutlaka aynı kapsayıcıda olmalıdır.
     @ViewBuilder
     func inGlassContainer(spacing: CGFloat = 12) -> some View {
+        #if canImport(FoundationModels)
         if #available(iOS 26.0, *) {
             GlassEffectContainer(spacing: spacing) { self }
         } else {
             self
         }
+        #else
+        self
+        #endif
     }
 }
 
