@@ -1,0 +1,216 @@
+<title>Woshida PS-3520M Masura Dedektörü</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: tek sütun teknik föy; ölçü tabloları ve çizim kendi yatay kaydırmalı kutularında */
+:root{
+  --bg:#f3f4f2; --panel:#ffffff; --fg:#1d2326; --muted:#5b666b; --line:#cfd5d3;
+  --accent:#d98a00; --steel:#3f6273; --ok:#2e7d4f; --warn:#b5481d;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Barlow",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15191b; --panel:#1d2326; --fg:#e4e8e6; --muted:#9aa6aa; --line:#33403f;
+  --accent:#f0a526; --steel:#86aabb; --ok:#6cc08f; --warn:#f08a5d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15191b; --panel:#1d2326; --fg:#e4e8e6; --muted:#9aa6aa; --line:#33403f;
+  --accent:#f0a526; --steel:#86aabb; --ok:#6cc08f; --warn:#f08a5d; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:920px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:36px}
+header{display:grid;gap:8px;border-bottom:3px solid var(--accent);padding-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);line-height:1;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:28px;margin:0 0 10px;text-wrap:balance}
+h3{font-family:var(--display);font-weight:500;font-size:21px;margin:18px 0 6px}
+p{margin:0 0 10px;max-width:68ch}
+section{display:grid;gap:6px;min-width:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);background:var(--panel);border-radius:4px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font-family:var(--mono);font-size:13.5px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.t-ok{color:var(--ok)} .t-inf{color:var(--steel)} .t-meas{color:var(--warn)}
+.note{border-left:4px solid var(--accent);background:var(--panel);padding:12px 16px;max-width:none}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow-x:auto;padding:12px}
+.fig svg{display:block;min-width:640px;width:100%;height:auto}
+.fig svg text{font-family:var(--mono);font-size:12px;fill:var(--fg)}
+.fig svg .lbl{fill:var(--muted)}
+.fig svg .acc{fill:var(--accent)}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.5;margin:0}
+.pass{color:var(--ok);font-weight:600}
+ol,ul{margin:0;padding-left:22px;max-width:68ch} li{margin:3px 0}
+a{color:var(--steel)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:13.5px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Programlı desen dikiş makinesi · masura ipi bitiş dedektörü · Ekim 2026</div>
+  <h1>Woshida PS-3520M / PS-3525: makine dosyası ve masura sensörü tasarımı</h1>
+  <div class="legend">
+    <span><span class="tag t-ok">KESİN</span> fotoğraftaki etiketten okundu</span>
+    <span><span class="tag t-inf">ÇIKARIM</span> aynı sınıf makinelerden / kodlardan</span>
+    <span><span class="tag t-meas">ÖLÇÜLECEK</span> internette yok, kumpasla alınmalı</span>
+  </div>
+</header>
+
+<section>
+  <h2>1. Önce dürüst durum</h2>
+  <p class="note">Woshida Machinery (Dongguan) bu modeller için internette yayımlanmış bir teknik föy, parça kataloğu veya mm ölçülü çizim <b>yayınlamamış</b>. Kapsamlı aramada tek bir Woshida PS-3520/3525 dokümanı çıkmadı. Bu makineler Çin'deki "3520/3525" sınıfı (Brother BAS-326 tipi) desen makinelerinin bir türevi. Aşağıdaki bilgiler etiketlerden okunanlar, aynı sınıf makinelerin yayınlanmış değerleri ve sizin fotoğraflarınızın analizi. Her satırda hangisi olduğu işaretli. Masura bölgesinin milimetre ölçüleri ancak makinenin üstünde kumpasla alınabilir. Bölüm 6'daki ölçüm listesini doldurup gönderdiğinizde çizimi gerçek ölçülerle bitiririm.</p>
+</section>
+
+<section>
+  <h2>2. Kimlik (etiketlerden)</h2>
+  <div class="tbl"><table>
+    <tr><th>Alan</th><th>Makine 1</th><th>Makine 2</th><th></th></tr>
+    <tr><td>Model</td><td class="v">PS-3520M</td><td class="v">PS-3525</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Seri no</td><td class="v">2024010007</td><td class="v">2024100009</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Üretim tarihi</td><td class="v">2024/02</td><td class="v">2024/11</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Ağırlık</td><td class="v">210 kg</td><td class="v">210 kg</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Boyut (masa dahil)</td><td class="v">70 × 120 × 115 cm</td><td class="v">70 × 120 × 115 cm</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Besleme</td><td class="v">220 V</td><td class="v">220 V</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Sertifika no</td><td class="v" colspan="2">XD3022412 20011304AC (CE)</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Üretici</td><td colspan="2">Woshida Machinery (Dongguan) Co., Ltd, No.2 Shui Wei Rd, Xin Wu Village, Qiao Tou, Hou Jie Town, Dongguan, Guangdong</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Türkiye ithalatçı</td><td colspan="2">Ideal Makina İç ve Dış Tic. Ltd. Şti., İkitelli OSB, Aymakoop San. Sit. C5 Blok No:45, Başakşehir/İstanbul</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Kontrol sistemi</td><td class="v" colspan="2">6E447R-2HA/A (SW)</td><td><span class="tag t-ok">KESİN</span></td></tr>
+    <tr><td>Operasyon paneli</td><td class="v" colspan="2">PI-6510-B-1.5M-6E447R · Sipariş no DH62195040</td><td><span class="tag t-ok">KESİN</span></td></tr>
+  </table></div>
+  <p><b>En hızlı kaynak:</b> Ideal Makina makinenin Türkiye ithalatçısı. Servis kılavuzunu, kanca (çağanoz) parça numarasını ve elektrik şemasını onlardan istemek, internette aramaktan daha hızlı sonuç verir.</p>
+</section>
+
+<section>
+  <h2>3. Teknik özellikler (3520/3525 sınıfı)</h2>
+  <div class="tbl"><table>
+    <tr><th>Özellik</th><th>Değer</th><th>Dayanak</th><th></th></tr>
+    <tr><td>Dikiş alanı</td><td class="v">PS-3520M: 350 × 200 mm<br>PS-3525: 350 × 250 mm</td><td>Model adındaki 35/20 ve 35/25 kodlaması. Jack, Highly, REER ve Cowboy'un 3520 modelleri de 350×200 mm.</td><td><span class="tag t-inf">ÇIKARIM</span></td></tr>
+    <tr><td>Dikiş uzunluğu</td><td class="v">0,1 – 12,7 mm</td><td>Jack JK-T3520MA-D, REER 3520K ve Jianglong 3525K föyleri</td><td><span class="tag t-inf">ÇIKARIM</span></td></tr>
+    <tr><td>Maks. hız</td><td class="v">2500 – 3000 dikiş/dk</td><td>Sınıftaki föylerde 2500, 2800 ve 3000 değerleri var</td><td><span class="tag t-inf">ÇIKARIM</span></td></tr>
+    <tr><td>İğne sistemi</td><td class="v">DP×17 (#14–#23)</td><td>Sınıftaki tüm föylerde aynı</td><td><span class="tag t-inf">ÇIKARIM</span></td></tr>
+    <tr><td>Kanca (çağanoz)</td><td class="v">Tam döner, büyük kapasiteli (2× veya 3×)</td><td>Fotoğraf: yatay bakan, mandallı masura kutulu tam döner kanca ve altında hareketli iplik kesme bıçağı kolu</td><td><span class="tag t-inf">ÇIKARIM</span></td></tr>
+    <tr><td>Masura ölçüsü</td><td class="v">2× kanca: ~Ø25,5 × 10 mm<br>3× kanca: ~Ø30 × 11 mm</td><td>Bayi listeleri (BAS-326G / 326H-484). Hangisinin sizde olduğu ölçülerek belirlenmeli.</td><td><span class="tag t-meas">ÖLÇÜLECEK</span></td></tr>
+    <tr><td>Kontrol</td><td>Dahao 6. nesil desen makinesi sistemi, HA dokunmatik panel</td><td>"6E447R" kodu Dahao'nun desen makinesi adlandırmasına uyuyor (örneğin 6T41X). Panel kodundaki "2HA" Dahao "Touch Panel HA" ile eşleşiyor. Paneldeki "服务云" (servis bulutu) QR etiketi Dahao'nun "大豪服务云" servisi.</td><td><span class="tag t-inf">ÇIKARIM</span></td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>4. Bugün bedava yapılabilecek: panelin masura sayacı</h2>
+  <p>Dahao HA panel kılavuzunda <b>"底线计数 / bottom line count"</b> (masura ipi sayacı) var. Menüden <i>Sayaç Ayarları → Alt iplik sayacı</i>'na girilir, başlangıç değeri girilip TEST ile kaydedilir. Sayaç sıfıra inince makine uyarı verir. Bir dolu masuranın kaç ilmek veya kaç parça yettiğini bir kez sayın, değeri bunun %90'ına ayarlayın. Bu, donanım eklemeden kalan ipliği tahmin eder ama ölçmez. Masura farklı doldurulursa sayaç yanılır. Gerçek ölçüm için aşağıdaki sensör gerekir.</p>
+</section>
+
+<section>
+  <h2>5. Cihaz tasarımı: optik masura ipi bitiş sensörü</h2>
+  <p><b>Prensip</b> (Juki ve Brother'ın fabrika opsiyonlarıyla aynı mantık). Masura kutusu dönmez, kanca onun etrafında döner. Masura kutusunun ön yüzü fotoğraftaki gibi alttan açıkta. Bu yüzden sensör alttan, eksen yönünde bakar:</p>
+  <ol>
+    <li>Masura kutusu yüzüne, mandal kolunun <b>dışında</b> kalan bir noktaya Ø3 mm delik açılır. Delik göbeğin hemen üstündeki yarıçapta, yani r<sub>s</sub> ≈ göbek yarıçapı + 1 mm olur. Yeni bir yedek masura kutusu kullanın, orijinali bozmayın.</li>
+    <li>Delikli (pencereli) flanşı olan alüminyum masuralar kullanılır. Karşı flanşın iç yüzüne ince reflektör bant yapıştırılır.</li>
+    <li>Masurada iplik varken ışık ipliğe çarpar ve dağılır, yansıma düşük olur. İplik r<sub>s</sub> seviyesinin altına inince ışık reflektöre ulaşır, yansıma yükselir ve alarm verilir.</li>
+    <li>Fiber optik kafa kancanın dönüş çemberine ve bıçak koluna değmeyecek şekilde, masura değişiminde yana katlanan bir menteşeli braket üzerine monte edilir. Amplifikatör gövdenin içinde uzakta durur.</li>
+  </ol>
+
+  <div class="fig" role="img" aria-label="Masura kutusu kesit çizimi ve sensör yerleşimi">
+  <svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="760" height="360" fill="none"/>
+    <!-- kanca gövdesi -->
+    <rect x="120" y="40" width="300" height="34" fill="none" stroke="var(--muted)" stroke-dasharray="5 4"/>
+    <text x="430" y="62" class="lbl">kanca (döner) – tabla tarafı</text>
+    <!-- masura kutusu -->
+    <rect x="140" y="74" width="260" height="120" fill="none" stroke="var(--steel)" stroke-width="2.5"/>
+    <text x="430" y="110" class="lbl">masura kutusu (sabit)</text>
+    <!-- masura flanşları -->
+    <rect x="160" y="86" width="220" height="7" fill="var(--steel)"/>
+    <rect x="160" y="175" width="220" height="7" fill="var(--steel)"/>
+    <rect x="160" y="93" width="220" height="3" fill="var(--accent)"/>
+    <text x="430" y="92" class="acc">reflektör bant (iç yüz)</text>
+    <!-- göbek -->
+    <rect x="252" y="93" width="36" height="82" fill="var(--muted)" opacity=".55"/>
+    <!-- iplik -->
+    <rect x="190" y="96" width="62" height="79" fill="var(--accent)" opacity=".18"/>
+    <rect x="288" y="96" width="62" height="79" fill="var(--accent)" opacity=".18"/>
+    <text x="196" y="140" class="lbl">iplik</text>
+    <!-- flanş penceresi + mekik yüzü deliği -->
+    <rect x="228" y="175" width="14" height="7" fill="var(--bg)"/>
+    <rect x="228" y="194" width="14" height="6" fill="var(--bg)" stroke="var(--warn)"/>
+    <line x1="140" y1="197" x2="400" y2="197" stroke="var(--steel)" stroke-width="5"/>
+    <rect x="229" y="194" width="12" height="7" fill="var(--bg)"/>
+    <text x="430" y="200" class="lbl">masura kutusu yüzü + Ø3 delik</text>
+    <!-- ışın -->
+    <line x1="235" y1="290" x2="235" y2="96" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 4"/>
+    <!-- fiber kafa -->
+    <rect x="225" y="270" width="20" height="44" fill="var(--steel)"/>
+    <path d="M235 314 C235 340 300 345 360 345" fill="none" stroke="var(--steel)" stroke-width="3"/>
+    <text x="368" y="349" class="lbl">fiber kablo → amplifikatör → Arduino A0</text>
+    <text x="255" y="290">fiber kafa (M3/M4)</text>
+    <!-- ölçü: d -->
+    <line x1="110" y1="200" x2="110" y2="270" stroke="var(--fg)"/>
+    <line x1="104" y1="200" x2="116" y2="200" stroke="var(--fg)"/><line x1="104" y1="270" x2="116" y2="270" stroke="var(--fg)"/>
+    <text x="20" y="240">d = 3–8 mm</text>
+    <!-- ölçü: r_s -->
+    <line x1="235" y1="222" x2="270" y2="222" stroke="var(--fg)"/>
+    <line x1="270" y1="214" x2="270" y2="230" stroke="var(--fg)"/>
+    <text x="150" y="238">r_s = Ø_göbek/2 + 1</text>
+    <!-- eksen -->
+    <line x1="270" y1="30" x2="270" y2="250" stroke="var(--muted)" stroke-dasharray="2 4"/>
+    <text x="276" y="28" class="lbl">kanca ekseni</text>
+    <!-- Ø_b -->
+    <line x1="160" y1="20" x2="380" y2="20" stroke="var(--fg)"/>
+    <text x="196" y="16">Ø_b (masura dış çapı) ÖLÇÜLECEK</text>
+  </svg>
+  </div>
+  <p style="font-size:13.5px;color:var(--muted)">Ölçekli değildir. Yatay eksenli kancada çizim 90° döner, mantık aynı kalır. Değerler Bölüm 6'daki ölçümlerle kesinleşecek.</p>
+
+  <h3>Malzeme listesi (BOM)</h3>
+  <div class="tbl"><table>
+    <tr><th>#</th><th>Parça</th><th>Örnek</th><th>Not</th></tr>
+    <tr><td>1</td><td>Fiber optik amplifikatör (analog çıkışlı)</td><td class="v">Keyence FS-N / Omron E3X-HD / Autonics BF5</td><td>Analog veya dijital çıkış. Dijitalde eşik amplifikatörde ayarlanır.</td></tr>
+    <tr><td>2</td><td>Yansımalı fiber kafa, M3 veya M4</td><td class="v">Omron E32-D211R / Keyence FU-35</td><td>Küçük uç kanca altına sığar</td></tr>
+    <tr><td>3</td><td>İğne üst ölü nokta sensörü</td><td class="v">M8 endüktif NPN (LJ8A3)</td><td>Volan veya mildeki bir vida başını görür</td></tr>
+    <tr><td>4</td><td>Mikrodenetleyici</td><td class="v">Arduino Nano + 24V→5V çevirici</td><td>Kod aşağıda, test edildi</td></tr>
+    <tr><td>5</td><td>İkaz lambası/buzzer + RESET butonu</td><td class="v">24V LED kolon + buton</td><td>Operatör yeni masura takınca basar</td></tr>
+    <tr><td>6</td><td>Yedek masura kutusu + pencereli Al masura</td><td class="v">Kancanızın kodu ile</td><td>Orijinali delmeyin</td></tr>
+    <tr><td>7</td><td>Menteşeli/mıknatıslı braket</td><td class="v">2 mm Al sac veya 3D baskı (PETG)</td><td>Ölçüler gelince çizilecek</td></tr>
+  </table></div>
+  <p><b>Makineyi durdurma:</b> Lamba ve buzzer bağımsız çalışır, makine elektroniğine dokunmaz. Makineyi otomatik durdurmak için Dahao kutusunun "duraklat" girişine bir röle kontağı bağlanabilir. Bu bağlantıyı sadece makinenin elektrik şeması (Ideal Makina'dan) ile doğruladıktan sonra yapın. Yanlış uca bağlamak kontrol kartını yakabilir.</p>
+
+  <h3>Yazılım ve test kanıtı</h3>
+  <p>Kod her ilmek boyunca sensörün en yüksek okumasını alır. Art arda 20 ilmek boyunca "göbek görünüyor" okunursa alarm kilitlenir. Makine dururken ölçüm yapılmaz, böylece masura değişimi yanlış alarm vermez. Testler bu oturumda derlenip çalıştırıldı:</p>
+<pre>$ ./test_masura
+<span class="pass">GECTI</span>  Dolu masura 5000 ilmek: yanlis alarm yok
+<span class="pass">GECTI</span>  Kisa parlamalar (3 ilmek) alarm tetiklemiyor
+       alarm ilmegi = 3019 (beklenen 3019)
+<span class="pass">GECTI</span>  Gobek acilinca 20 ilmek icinde alarm
+<span class="pass">GECTI</span>  Makine dururken ornek alinmiyor
+<span class="pass">GECTI</span>  Alarm kilitli kalir, RESET ile temizlenir
+$ ./test_pencere
+<span class="pass">GECTI</span>  Dolu masura, donen flans pencereleri, 6000 ilmek: alarm yok
+<span class="pass">GECTI</span>  Gobek 4000. ilmekte acildi -> alarm 4019. ilmekte
+$ g++ ... masura_sensoru.ino   → SKETCH DERLENDI VE CALISTI</pre>
+  <p style="font-size:13.5px;color:var(--muted)">Bunlar simülasyon testleri. Mantığın doğru çalıştığını kanıtlar. Gerçek eşik değeri (700) makinede Serial Plotter ile dolu ve boş masura okunarak kalibre edilir.</p>
+</section>
+
+<section>
+  <h2>6. Ölçüm listesi: bunları gönderin, çizimi kesinleştireyim</h2>
+  <div class="tbl"><table>
+    <tr><th>#</th><th>Ölçü</th><th>Nasıl</th></tr>
+    <tr><td>1</td><td>Masura dış çapı, yüksekliği, göbek çapı, flanş kalınlığı</td><td>Kumpas, boş ve dolu masura</td></tr>
+    <tr><td>2</td><td>Masura kutusu dış çapı, mandal kolunun genişliği ve konumu</td><td>Kumpas + yüzün dik açıdan fotoğrafı, yanına cetvel koyarak</td></tr>
+    <tr><td>3</td><td>Masura kutusu yüzünden aşağıdaki ilk engele (kapak, tabla, bıçak kolu) mesafe</td><td>Derinlik kumpası</td></tr>
+    <tr><td>4</td><td>Kanca dış çapı ve kancanın dönüş çemberinin yüzeyden taşması</td><td>Kumpas, makine elle çevrilerek</td></tr>
+    <tr><td>5</td><td>İplik kesme bıçağı kolunun hareket alanı</td><td>Kesme ayarında elle çalıştırıp fotoğraf</td></tr>
+    <tr><td>6</td><td>Kanca braketinin ve tablanın altındaki boş diş delikleri, bunların çapı ve konumu</td><td>Fotoğraf + kumpas</td></tr>
+    <tr><td>7</td><td>Kanca üzerindeki yazı (ör. HSM-…, KHS-…)</td><td>Temizleyip yakından fotoğraf</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>Kaynaklar</h2>
+  <ul style="font-size:14px">
+    <li><a href="https://www.jack-sewing.com/wp-content/leaflets/3520MA.pdf">Jack JK-T3520MA-D föyü</a> · <a href="https://www.reermachine.com/product/reer-3520k-cnc-computer-programmable-pattern-sewing-machine-for-sale/">REER 3520K</a> · <a href="https://www.cowboysewusa.com/ASM911.html">Cowboy ASM911-3520</a> · <a href="https://china-highly.en.made-in-china.com/product/uAQpkaCMJEhO/China-Highly-3020-Programmable-Computer-Pattern-Sewing-Machine-for-Garments-Clothing-Fabric-Jeans-Underwear.html">Highly 3020/3520</a> · <a href="https://www.alibaba.com/product-detail/3525K-Automatic-Industrial-Computer-Programmable-Pattern_1601204096484.html">Jianglong 3525K</a></li>
+    <li><a href="https://www.cowboysew.com/BAS-326G-programmable-electronic-pattern-sewer.htm">BAS-326G masura</a> · <a href="https://www.cowboysew.com/BAS-326H-484-Electronic-Pattern-Tacker-with-Treble-Hook.htm">BAS-326H-484 masura</a></li>
+    <li><a href="https://www.manualslib.com/manual/3501231/Dahao-41-Series.html">Dahao 41 Serisi / Touch Panel HA kılavuzu</a> · <a href="https://sm-ua.com/manual/BRUCE/T3520/BRC-T3520MA+Laser+Bag+Opening+Electronic+Control+User+Manual.pdf">Dahao Touch Panel HA (T3520MA)</a> · <a href="https://www.manualslib.com/manual/4019971/Dahao-6t41x.html">Dahao 6T41X</a> · <a href="https://www.dahaobj.com/service/download149.html">Dahao indirme sayfası</a></li>
+    <li><a href="https://www.juki.co.jp/industrial_e/service_e/option/detail11.php">Juki AMS masura ipi kalan dedektörü</a> · <a href="https://www.juki.co.jp/industrial_j/download_j/manual_j/ps800_12080/ps800-12080%20series/menu/option/pdf/bobbinthread_instruction_eg.pdf">Juki PS-800 masura dedektörü kılavuzu</a> · <a href="https://www.freepatentsonline.com/5161475.html">Juki patenti US5161475</a> · <a href="https://patents.google.com/patent/US5788171A/en">US5788171A</a></li>
+  </ul>
+</section>
+</div>
